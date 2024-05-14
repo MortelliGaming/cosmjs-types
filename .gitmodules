@@ -7,3 +7,12 @@
 [submodule "ibc-go"]
 	path = protos/ibc-go-src
 	url = https://github.com/cosmos/ibc-go
+[submodule "protos/osmosis"]
+	path = protos/osmosis
+	url = https://github.com/osmosis-labs/osmosis
+[submodule "protos/evmos"]
+	path = protos/evmos
+	url = https://github.com/evmos/evmos
+[submodule "protos/tendermint"]
+	path = protos/tendermint
+	url = https://github.com/tendermint/tendermint
