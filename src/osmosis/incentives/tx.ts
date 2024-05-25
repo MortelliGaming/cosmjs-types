@@ -5,7 +5,7 @@ import { Timestamp } from "../../google/protobuf/timestamp";
 import { BinaryReader, BinaryWriter } from "../../binary";
 import { isSet, fromJsonTimestamp, fromTimestamp, DeepPartial, Exact, Rpc } from "../../helpers";
 export const protobufPackage = "osmosis.incentives";
-/** MsgCreateGauge creates a gague to distribute rewards to users */
+/** MsgCreateGauge creates a gauge to distribute rewards to users */
 export interface MsgCreateGauge {
   /**
    * is_perpetual shows if it's a perpetual or non-perpetual gauge

@@ -7,7 +7,7 @@ export const protobufPackage = "ibc.applications.transfer.v1";
 /**
  * MsgTransfer defines a msg to transfer fungible tokens (i.e Coins) between
  * ICS20 enabled chains. See ICS Spec here:
- * https://github.com/cosmos/ibc/tree/master/spec/app/ics-020-fungible-token-transfer#data-structures
+ * https://github.com/cosmos/ics/tree/master/spec/ics-020-fungible-token-transfer#data-structures
  */
 export interface MsgTransfer {
   /** the port on which the packet will be sent */
@@ -26,18 +26,13 @@ export interface MsgTransfer {
    */
   timeoutHeight: Height;
   /**
-   * Timeout timestamp in absolute nanoseconds since unix epoch.
+   * Timeout timestamp (in nanoseconds) relative to the current block timestamp.
    * The timeout is disabled when set to 0.
    */
   timeoutTimestamp: bigint;
-  /** optional memo */
-  memo: string;
 }
 /** MsgTransferResponse defines the Msg/Transfer response type. */
-export interface MsgTransferResponse {
-  /** sequence number of the transfer packet sent */
-  sequence: bigint;
-}
+export interface MsgTransferResponse {}
 function createBaseMsgTransfer(): MsgTransfer {
   return {
     sourcePort: "",
@@ -47,7 +42,6 @@ function createBaseMsgTransfer(): MsgTransfer {
     receiver: "",
     timeoutHeight: Height.fromPartial({}),
     timeoutTimestamp: BigInt(0),
-    memo: "",
   };
 }
 export const MsgTransfer = {
@@ -73,9 +67,6 @@ export const MsgTransfer = {
     }
     if (message.timeoutTimestamp !== BigInt(0)) {
       writer.uint32(56).uint64(message.timeoutTimestamp);
-    }
-    if (message.memo !== "") {
-      writer.uint32(66).string(message.memo);
     }
     return writer;
   },
@@ -107,9 +98,6 @@ export const MsgTransfer = {
         case 7:
           message.timeoutTimestamp = reader.uint64();
           break;
-        case 8:
-          message.memo = reader.string();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -126,7 +114,6 @@ export const MsgTransfer = {
     if (isSet(object.receiver)) obj.receiver = String(object.receiver);
     if (isSet(object.timeoutHeight)) obj.timeoutHeight = Height.fromJSON(object.timeoutHeight);
     if (isSet(object.timeoutTimestamp)) obj.timeoutTimestamp = BigInt(object.timeoutTimestamp.toString());
-    if (isSet(object.memo)) obj.memo = String(object.memo);
     return obj;
   },
   toJSON(message: MsgTransfer): unknown {
@@ -140,7 +127,6 @@ export const MsgTransfer = {
       (obj.timeoutHeight = message.timeoutHeight ? Height.toJSON(message.timeoutHeight) : undefined);
     message.timeoutTimestamp !== undefined &&
       (obj.timeoutTimestamp = (message.timeoutTimestamp || BigInt(0)).toString());
-    message.memo !== undefined && (obj.memo = message.memo);
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<MsgTransfer>, I>>(object: I): MsgTransfer {
@@ -158,21 +144,15 @@ export const MsgTransfer = {
     if (object.timeoutTimestamp !== undefined && object.timeoutTimestamp !== null) {
       message.timeoutTimestamp = BigInt(object.timeoutTimestamp.toString());
     }
-    message.memo = object.memo ?? "";
     return message;
   },
 };
 function createBaseMsgTransferResponse(): MsgTransferResponse {
-  return {
-    sequence: BigInt(0),
-  };
+  return {};
 }
 export const MsgTransferResponse = {
   typeUrl: "/ibc.applications.transfer.v1.MsgTransferResponse",
-  encode(message: MsgTransferResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.sequence !== BigInt(0)) {
-      writer.uint32(8).uint64(message.sequence);
-    }
+  encode(_: MsgTransferResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
     return writer;
   },
   decode(input: BinaryReader | Uint8Array, length?: number): MsgTransferResponse {
@@ -182,9 +162,6 @@ export const MsgTransferResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.sequence = reader.uint64();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -192,21 +169,16 @@ export const MsgTransferResponse = {
     }
     return message;
   },
-  fromJSON(object: any): MsgTransferResponse {
+  fromJSON(_: any): MsgTransferResponse {
     const obj = createBaseMsgTransferResponse();
-    if (isSet(object.sequence)) obj.sequence = BigInt(object.sequence.toString());
     return obj;
   },
-  toJSON(message: MsgTransferResponse): unknown {
+  toJSON(_: MsgTransferResponse): unknown {
     const obj: any = {};
-    message.sequence !== undefined && (obj.sequence = (message.sequence || BigInt(0)).toString());
     return obj;
   },
-  fromPartial<I extends Exact<DeepPartial<MsgTransferResponse>, I>>(object: I): MsgTransferResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgTransferResponse>, I>>(_: I): MsgTransferResponse {
     const message = createBaseMsgTransferResponse();
-    if (object.sequence !== undefined && object.sequence !== null) {
-      message.sequence = BigInt(object.sequence.toString());
-    }
     return message;
   },
 };

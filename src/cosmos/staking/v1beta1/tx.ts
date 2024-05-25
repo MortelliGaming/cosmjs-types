@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Description, CommissionRates, Params } from "./staking";
+import { Description, CommissionRates } from "./staking";
 import { Any } from "../../../google/protobuf/any";
 import { Coin } from "../../base/v1beta1/coin";
 import { Timestamp } from "../../../google/protobuf/timestamp";
@@ -71,47 +71,6 @@ export interface MsgUndelegate {
 export interface MsgUndelegateResponse {
   completionTime: Timestamp;
 }
-/**
- * MsgCancelUnbondingDelegation defines the SDK message for performing a cancel unbonding delegation for delegator
- *
- * Since: cosmos-sdk 0.46
- */
-export interface MsgCancelUnbondingDelegation {
-  delegatorAddress: string;
-  validatorAddress: string;
-  /** amount is always less than or equal to unbonding delegation entry balance */
-  amount: Coin;
-  /** creation_height is the height which the unbonding took place. */
-  creationHeight: bigint;
-}
-/**
- * MsgCancelUnbondingDelegationResponse
- *
- * Since: cosmos-sdk 0.46
- */
-export interface MsgCancelUnbondingDelegationResponse {}
-/**
- * MsgUpdateParams is the Msg/UpdateParams request type.
- *
- * Since: cosmos-sdk 0.47
- */
-export interface MsgUpdateParams {
-  /** authority is the address that controls the module (defaults to x/gov unless overwritten). */
-  authority: string;
-  /**
-   * params defines the x/staking parameters to update.
-   *
-   * NOTE: All parameters must be supplied.
-   */
-  params: Params;
-}
-/**
- * MsgUpdateParamsResponse defines the response structure for executing a
- * MsgUpdateParams message.
- *
- * Since: cosmos-sdk 0.47
- */
-export interface MsgUpdateParamsResponse {}
 function createBaseMsgCreateValidator(): MsgCreateValidator {
   return {
     description: Description.fromPartial({}),
@@ -726,222 +685,6 @@ export const MsgUndelegateResponse = {
     return message;
   },
 };
-function createBaseMsgCancelUnbondingDelegation(): MsgCancelUnbondingDelegation {
-  return {
-    delegatorAddress: "",
-    validatorAddress: "",
-    amount: Coin.fromPartial({}),
-    creationHeight: BigInt(0),
-  };
-}
-export const MsgCancelUnbondingDelegation = {
-  typeUrl: "/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation",
-  encode(message: MsgCancelUnbondingDelegation, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.delegatorAddress !== "") {
-      writer.uint32(10).string(message.delegatorAddress);
-    }
-    if (message.validatorAddress !== "") {
-      writer.uint32(18).string(message.validatorAddress);
-    }
-    if (message.amount !== undefined) {
-      Coin.encode(message.amount, writer.uint32(26).fork()).ldelim();
-    }
-    if (message.creationHeight !== BigInt(0)) {
-      writer.uint32(32).int64(message.creationHeight);
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgCancelUnbondingDelegation {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgCancelUnbondingDelegation();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.delegatorAddress = reader.string();
-          break;
-        case 2:
-          message.validatorAddress = reader.string();
-          break;
-        case 3:
-          message.amount = Coin.decode(reader, reader.uint32());
-          break;
-        case 4:
-          message.creationHeight = reader.int64();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): MsgCancelUnbondingDelegation {
-    const obj = createBaseMsgCancelUnbondingDelegation();
-    if (isSet(object.delegatorAddress)) obj.delegatorAddress = String(object.delegatorAddress);
-    if (isSet(object.validatorAddress)) obj.validatorAddress = String(object.validatorAddress);
-    if (isSet(object.amount)) obj.amount = Coin.fromJSON(object.amount);
-    if (isSet(object.creationHeight)) obj.creationHeight = BigInt(object.creationHeight.toString());
-    return obj;
-  },
-  toJSON(message: MsgCancelUnbondingDelegation): unknown {
-    const obj: any = {};
-    message.delegatorAddress !== undefined && (obj.delegatorAddress = message.delegatorAddress);
-    message.validatorAddress !== undefined && (obj.validatorAddress = message.validatorAddress);
-    message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
-    message.creationHeight !== undefined &&
-      (obj.creationHeight = (message.creationHeight || BigInt(0)).toString());
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<MsgCancelUnbondingDelegation>, I>>(
-    object: I,
-  ): MsgCancelUnbondingDelegation {
-    const message = createBaseMsgCancelUnbondingDelegation();
-    message.delegatorAddress = object.delegatorAddress ?? "";
-    message.validatorAddress = object.validatorAddress ?? "";
-    if (object.amount !== undefined && object.amount !== null) {
-      message.amount = Coin.fromPartial(object.amount);
-    }
-    if (object.creationHeight !== undefined && object.creationHeight !== null) {
-      message.creationHeight = BigInt(object.creationHeight.toString());
-    }
-    return message;
-  },
-};
-function createBaseMsgCancelUnbondingDelegationResponse(): MsgCancelUnbondingDelegationResponse {
-  return {};
-}
-export const MsgCancelUnbondingDelegationResponse = {
-  typeUrl: "/cosmos.staking.v1beta1.MsgCancelUnbondingDelegationResponse",
-  encode(
-    _: MsgCancelUnbondingDelegationResponse,
-    writer: BinaryWriter = BinaryWriter.create(),
-  ): BinaryWriter {
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgCancelUnbondingDelegationResponse {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgCancelUnbondingDelegationResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(_: any): MsgCancelUnbondingDelegationResponse {
-    const obj = createBaseMsgCancelUnbondingDelegationResponse();
-    return obj;
-  },
-  toJSON(_: MsgCancelUnbondingDelegationResponse): unknown {
-    const obj: any = {};
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<MsgCancelUnbondingDelegationResponse>, I>>(
-    _: I,
-  ): MsgCancelUnbondingDelegationResponse {
-    const message = createBaseMsgCancelUnbondingDelegationResponse();
-    return message;
-  },
-};
-function createBaseMsgUpdateParams(): MsgUpdateParams {
-  return {
-    authority: "",
-    params: Params.fromPartial({}),
-  };
-}
-export const MsgUpdateParams = {
-  typeUrl: "/cosmos.staking.v1beta1.MsgUpdateParams",
-  encode(message: MsgUpdateParams, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.authority !== "") {
-      writer.uint32(10).string(message.authority);
-    }
-    if (message.params !== undefined) {
-      Params.encode(message.params, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgUpdateParams {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgUpdateParams();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.authority = reader.string();
-          break;
-        case 2:
-          message.params = Params.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): MsgUpdateParams {
-    const obj = createBaseMsgUpdateParams();
-    if (isSet(object.authority)) obj.authority = String(object.authority);
-    if (isSet(object.params)) obj.params = Params.fromJSON(object.params);
-    return obj;
-  },
-  toJSON(message: MsgUpdateParams): unknown {
-    const obj: any = {};
-    message.authority !== undefined && (obj.authority = message.authority);
-    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<MsgUpdateParams>, I>>(object: I): MsgUpdateParams {
-    const message = createBaseMsgUpdateParams();
-    message.authority = object.authority ?? "";
-    if (object.params !== undefined && object.params !== null) {
-      message.params = Params.fromPartial(object.params);
-    }
-    return message;
-  },
-};
-function createBaseMsgUpdateParamsResponse(): MsgUpdateParamsResponse {
-  return {};
-}
-export const MsgUpdateParamsResponse = {
-  typeUrl: "/cosmos.staking.v1beta1.MsgUpdateParamsResponse",
-  encode(_: MsgUpdateParamsResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgUpdateParamsResponse {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgUpdateParamsResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(_: any): MsgUpdateParamsResponse {
-    const obj = createBaseMsgUpdateParamsResponse();
-    return obj;
-  },
-  toJSON(_: MsgUpdateParamsResponse): unknown {
-    const obj: any = {};
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<MsgUpdateParamsResponse>, I>>(_: I): MsgUpdateParamsResponse {
-    const message = createBaseMsgUpdateParamsResponse();
-    return message;
-  },
-};
 /** Msg defines the staking Msg service. */
 export interface Msg {
   /** CreateValidator defines a method for creating a new validator. */
@@ -963,21 +706,6 @@ export interface Msg {
    * delegate and a validator.
    */
   Undelegate(request: MsgUndelegate): Promise<MsgUndelegateResponse>;
-  /**
-   * CancelUnbondingDelegation defines a method for performing canceling the unbonding delegation
-   * and delegate back to previous validator.
-   *
-   * Since: cosmos-sdk 0.46
-   */
-  CancelUnbondingDelegation(
-    request: MsgCancelUnbondingDelegation,
-  ): Promise<MsgCancelUnbondingDelegationResponse>;
-  /**
-   * UpdateParams defines an operation for updating the x/staking module
-   * parameters.
-   * Since: cosmos-sdk 0.47
-   */
-  UpdateParams(request: MsgUpdateParams): Promise<MsgUpdateParamsResponse>;
 }
 export class MsgClientImpl implements Msg {
   private readonly rpc: Rpc;
@@ -988,8 +716,6 @@ export class MsgClientImpl implements Msg {
     this.Delegate = this.Delegate.bind(this);
     this.BeginRedelegate = this.BeginRedelegate.bind(this);
     this.Undelegate = this.Undelegate.bind(this);
-    this.CancelUnbondingDelegation = this.CancelUnbondingDelegation.bind(this);
-    this.UpdateParams = this.UpdateParams.bind(this);
   }
   CreateValidator(request: MsgCreateValidator): Promise<MsgCreateValidatorResponse> {
     const data = MsgCreateValidator.encode(request).finish();
@@ -1015,17 +741,5 @@ export class MsgClientImpl implements Msg {
     const data = MsgUndelegate.encode(request).finish();
     const promise = this.rpc.request("cosmos.staking.v1beta1.Msg", "Undelegate", data);
     return promise.then((data) => MsgUndelegateResponse.decode(new BinaryReader(data)));
-  }
-  CancelUnbondingDelegation(
-    request: MsgCancelUnbondingDelegation,
-  ): Promise<MsgCancelUnbondingDelegationResponse> {
-    const data = MsgCancelUnbondingDelegation.encode(request).finish();
-    const promise = this.rpc.request("cosmos.staking.v1beta1.Msg", "CancelUnbondingDelegation", data);
-    return promise.then((data) => MsgCancelUnbondingDelegationResponse.decode(new BinaryReader(data)));
-  }
-  UpdateParams(request: MsgUpdateParams): Promise<MsgUpdateParamsResponse> {
-    const data = MsgUpdateParams.encode(request).finish();
-    const promise = this.rpc.request("cosmos.staking.v1beta1.Msg", "UpdateParams", data);
-    return promise.then((data) => MsgUpdateParamsResponse.decode(new BinaryReader(data)));
   }
 }

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Any } from "../../../google/protobuf/any";
 import { BinaryReader, BinaryWriter } from "../../../binary";
-import { isSet, DeepPartial, Exact, bytesFromBase64, base64FromBytes } from "../../../helpers";
+import { isSet, DeepPartial, Exact } from "../../../helpers";
 export const protobufPackage = "cosmos.auth.v1beta1";
 /**
  * BaseAccount defines a base account type. It contains all the necessary fields
@@ -19,20 +19,6 @@ export interface ModuleAccount {
   baseAccount?: BaseAccount;
   name: string;
   permissions: string[];
-}
-/**
- * ModuleCredential represents a unclaimable pubkey for base accounts controlled by modules.
- *
- * Since: cosmos-sdk 0.47
- */
-export interface ModuleCredential {
-  /** module_name is the name of the module used for address derivation (passed into address.Module). */
-  moduleName: string;
-  /**
-   * derivation_keys is for deriving a module account address (passed into address.Module)
-   * adding more keys creates sub-account addresses (passed into address.Derive)
-   */
-  derivationKeys: Uint8Array[];
 }
 /** Params defines the parameters for the auth module. */
 export interface Params {
@@ -195,69 +181,6 @@ export const ModuleAccount = {
     }
     message.name = object.name ?? "";
     message.permissions = object.permissions?.map((e) => e) || [];
-    return message;
-  },
-};
-function createBaseModuleCredential(): ModuleCredential {
-  return {
-    moduleName: "",
-    derivationKeys: [],
-  };
-}
-export const ModuleCredential = {
-  typeUrl: "/cosmos.auth.v1beta1.ModuleCredential",
-  encode(message: ModuleCredential, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.moduleName !== "") {
-      writer.uint32(10).string(message.moduleName);
-    }
-    for (const v of message.derivationKeys) {
-      writer.uint32(18).bytes(v!);
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): ModuleCredential {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseModuleCredential();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.moduleName = reader.string();
-          break;
-        case 2:
-          message.derivationKeys.push(reader.bytes());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): ModuleCredential {
-    const obj = createBaseModuleCredential();
-    if (isSet(object.moduleName)) obj.moduleName = String(object.moduleName);
-    if (Array.isArray(object?.derivationKeys))
-      obj.derivationKeys = object.derivationKeys.map((e: any) => bytesFromBase64(e));
-    return obj;
-  },
-  toJSON(message: ModuleCredential): unknown {
-    const obj: any = {};
-    message.moduleName !== undefined && (obj.moduleName = message.moduleName);
-    if (message.derivationKeys) {
-      obj.derivationKeys = message.derivationKeys.map((e) =>
-        base64FromBytes(e !== undefined ? e : new Uint8Array()),
-      );
-    } else {
-      obj.derivationKeys = [];
-    }
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<ModuleCredential>, I>>(object: I): ModuleCredential {
-    const message = createBaseModuleCredential();
-    message.moduleName = object.moduleName ?? "";
-    message.derivationKeys = object.derivationKeys?.map((e) => e) || [];
     return message;
   },
 };

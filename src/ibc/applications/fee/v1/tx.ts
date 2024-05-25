@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { Fee, PacketFee } from "./fee";
-import { PacketId } from "../../../core/channel/v1/channel";
 import { BinaryReader, BinaryWriter } from "../../../../binary";
 import { isSet, DeepPartial, Exact, Rpc } from "../../../../helpers";
 export const protobufPackage = "ibc.applications.fee.v1";
@@ -40,7 +39,7 @@ export interface MsgPayPacketFee {
   fee: Fee;
   /** the source port unique identifier */
   sourcePortId: string;
-  /** the source channel unique identifer */
+  /** the source channel unique identifier */
   sourceChannelId: string;
   /** account address to refund fee if necessary */
   signer: string;
@@ -54,8 +53,6 @@ export interface MsgPayPacketFeeResponse {}
  * This Msg can be used to pay for a packet at a specified sequence (instead of the next sequence send)
  */
 export interface MsgPayPacketFeeAsync {
-  /** unique packet identifier comprised of the channel ID, port ID and sequence */
-  packetId: PacketId;
   /** the packet fee associated with a particular IBC packet */
   packetFee: PacketFee;
 }
@@ -419,16 +416,12 @@ export const MsgPayPacketFeeResponse = {
 };
 function createBaseMsgPayPacketFeeAsync(): MsgPayPacketFeeAsync {
   return {
-    packetId: PacketId.fromPartial({}),
     packetFee: PacketFee.fromPartial({}),
   };
 }
 export const MsgPayPacketFeeAsync = {
   typeUrl: "/ibc.applications.fee.v1.MsgPayPacketFeeAsync",
   encode(message: MsgPayPacketFeeAsync, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.packetId !== undefined) {
-      PacketId.encode(message.packetId, writer.uint32(10).fork()).ldelim();
-    }
     if (message.packetFee !== undefined) {
       PacketFee.encode(message.packetFee, writer.uint32(18).fork()).ldelim();
     }
@@ -441,9 +434,6 @@ export const MsgPayPacketFeeAsync = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.packetId = PacketId.decode(reader, reader.uint32());
-          break;
         case 2:
           message.packetFee = PacketFee.decode(reader, reader.uint32());
           break;
@@ -456,23 +446,17 @@ export const MsgPayPacketFeeAsync = {
   },
   fromJSON(object: any): MsgPayPacketFeeAsync {
     const obj = createBaseMsgPayPacketFeeAsync();
-    if (isSet(object.packetId)) obj.packetId = PacketId.fromJSON(object.packetId);
     if (isSet(object.packetFee)) obj.packetFee = PacketFee.fromJSON(object.packetFee);
     return obj;
   },
   toJSON(message: MsgPayPacketFeeAsync): unknown {
     const obj: any = {};
-    message.packetId !== undefined &&
-      (obj.packetId = message.packetId ? PacketId.toJSON(message.packetId) : undefined);
     message.packetFee !== undefined &&
       (obj.packetFee = message.packetFee ? PacketFee.toJSON(message.packetFee) : undefined);
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<MsgPayPacketFeeAsync>, I>>(object: I): MsgPayPacketFeeAsync {
     const message = createBaseMsgPayPacketFeeAsync();
-    if (object.packetId !== undefined && object.packetId !== null) {
-      message.packetId = PacketId.fromPartial(object.packetId);
-    }
     if (object.packetFee !== undefined && object.packetFee !== null) {
       message.packetFee = PacketFee.fromPartial(object.packetFee);
     }

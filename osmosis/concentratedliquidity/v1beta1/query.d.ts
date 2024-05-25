@@ -166,7 +166,6 @@ export declare const UserPositionsRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } | undefined;
     } & {
         address?: string | undefined;
@@ -176,13 +175,11 @@ export declare const UserPositionsRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & {
             key?: Uint8Array | undefined;
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & Record<Exclude<keyof I["pagination"], keyof PageRequest>, never>) | undefined;
     } & Record<Exclude<keyof I, keyof UserPositionsRequest>, never>>(object: I): UserPositionsRequest;
 };
@@ -627,7 +624,6 @@ export declare const PoolsRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } | undefined;
     } & {
         pagination?: ({
@@ -635,13 +631,11 @@ export declare const PoolsRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & {
             key?: Uint8Array | undefined;
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & Record<Exclude<keyof I["pagination"], keyof PageRequest>, never>) | undefined;
     } & Record<Exclude<keyof I, "pagination">, never>>(object: I): PoolsRequest;
 };
@@ -1139,7 +1133,6 @@ export declare const IncentiveRecordsRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } | undefined;
     } & {
         poolId?: bigint | undefined;
@@ -1148,13 +1141,11 @@ export declare const IncentiveRecordsRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & {
             key?: Uint8Array | undefined;
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & Record<Exclude<keyof I["pagination"], keyof PageRequest>, never>) | undefined;
     } & Record<Exclude<keyof I, keyof IncentiveRecordsRequest>, never>>(object: I): IncentiveRecordsRequest;
 };

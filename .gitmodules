@@ -16,3 +16,6 @@
 [submodule "protos/tendermint"]
 	path = protos/tendermint
 	url = https://github.com/tendermint/tendermint
+[submodule "protos/crossfi"]
+	path = protos/crossfi
+	url = https://github.com/crossfichain/crossfi-node

@@ -8,10 +8,10 @@ export const protobufPackage = "tendermint.types";
  * validity of blocks.
  */
 export interface ConsensusParams {
-  block?: BlockParams;
-  evidence?: EvidenceParams;
-  validator?: ValidatorParams;
-  version?: VersionParams;
+  block: BlockParams;
+  evidence: EvidenceParams;
+  validator: ValidatorParams;
+  version: VersionParams;
 }
 /** BlockParams contains limits on the block size. */
 export interface BlockParams {
@@ -25,6 +25,13 @@ export interface BlockParams {
    * Note: must be greater or equal to -1
    */
   maxGas: bigint;
+  /**
+   * Minimum time increment between consecutive blocks (in milliseconds) If the
+   * block header timestamp is ahead of the system clock, decrease this value.
+   *
+   * Not exposed to the application.
+   */
+  timeIotaMs: bigint;
 }
 /** EvidenceParams determine how we handle evidence of malfeasance. */
 export interface EvidenceParams {
@@ -59,7 +66,7 @@ export interface ValidatorParams {
 }
 /** VersionParams contains the ABCI application version. */
 export interface VersionParams {
-  app: bigint;
+  appVersion: bigint;
 }
 /**
  * HashedParams is a subset of ConsensusParams.
@@ -72,10 +79,10 @@ export interface HashedParams {
 }
 function createBaseConsensusParams(): ConsensusParams {
   return {
-    block: undefined,
-    evidence: undefined,
-    validator: undefined,
-    version: undefined,
+    block: BlockParams.fromPartial({}),
+    evidence: EvidenceParams.fromPartial({}),
+    validator: ValidatorParams.fromPartial({}),
+    version: VersionParams.fromPartial({}),
   };
 }
 export const ConsensusParams = {
@@ -162,6 +169,7 @@ function createBaseBlockParams(): BlockParams {
   return {
     maxBytes: BigInt(0),
     maxGas: BigInt(0),
+    timeIotaMs: BigInt(0),
   };
 }
 export const BlockParams = {
@@ -172,6 +180,9 @@ export const BlockParams = {
     }
     if (message.maxGas !== BigInt(0)) {
       writer.uint32(16).int64(message.maxGas);
+    }
+    if (message.timeIotaMs !== BigInt(0)) {
+      writer.uint32(24).int64(message.timeIotaMs);
     }
     return writer;
   },
@@ -188,6 +199,9 @@ export const BlockParams = {
         case 2:
           message.maxGas = reader.int64();
           break;
+        case 3:
+          message.timeIotaMs = reader.int64();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -199,12 +213,14 @@ export const BlockParams = {
     const obj = createBaseBlockParams();
     if (isSet(object.maxBytes)) obj.maxBytes = BigInt(object.maxBytes.toString());
     if (isSet(object.maxGas)) obj.maxGas = BigInt(object.maxGas.toString());
+    if (isSet(object.timeIotaMs)) obj.timeIotaMs = BigInt(object.timeIotaMs.toString());
     return obj;
   },
   toJSON(message: BlockParams): unknown {
     const obj: any = {};
     message.maxBytes !== undefined && (obj.maxBytes = (message.maxBytes || BigInt(0)).toString());
     message.maxGas !== undefined && (obj.maxGas = (message.maxGas || BigInt(0)).toString());
+    message.timeIotaMs !== undefined && (obj.timeIotaMs = (message.timeIotaMs || BigInt(0)).toString());
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<BlockParams>, I>>(object: I): BlockParams {
@@ -214,6 +230,9 @@ export const BlockParams = {
     }
     if (object.maxGas !== undefined && object.maxGas !== null) {
       message.maxGas = BigInt(object.maxGas.toString());
+    }
+    if (object.timeIotaMs !== undefined && object.timeIotaMs !== null) {
+      message.timeIotaMs = BigInt(object.timeIotaMs.toString());
     }
     return message;
   },
@@ -344,14 +363,14 @@ export const ValidatorParams = {
 };
 function createBaseVersionParams(): VersionParams {
   return {
-    app: BigInt(0),
+    appVersion: BigInt(0),
   };
 }
 export const VersionParams = {
   typeUrl: "/tendermint.types.VersionParams",
   encode(message: VersionParams, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.app !== BigInt(0)) {
-      writer.uint32(8).uint64(message.app);
+    if (message.appVersion !== BigInt(0)) {
+      writer.uint32(8).uint64(message.appVersion);
     }
     return writer;
   },
@@ -363,7 +382,7 @@ export const VersionParams = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.app = reader.uint64();
+          message.appVersion = reader.uint64();
           break;
         default:
           reader.skipType(tag & 7);
@@ -374,18 +393,18 @@ export const VersionParams = {
   },
   fromJSON(object: any): VersionParams {
     const obj = createBaseVersionParams();
-    if (isSet(object.app)) obj.app = BigInt(object.app.toString());
+    if (isSet(object.appVersion)) obj.appVersion = BigInt(object.appVersion.toString());
     return obj;
   },
   toJSON(message: VersionParams): unknown {
     const obj: any = {};
-    message.app !== undefined && (obj.app = (message.app || BigInt(0)).toString());
+    message.appVersion !== undefined && (obj.appVersion = (message.appVersion || BigInt(0)).toString());
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<VersionParams>, I>>(object: I): VersionParams {
     const message = createBaseVersionParams();
-    if (object.app !== undefined && object.app !== null) {
-      message.app = BigInt(object.app.toString());
+    if (object.appVersion !== undefined && object.appVersion !== null) {
+      message.appVersion = BigInt(object.appVersion.toString());
     }
     return message;
   },

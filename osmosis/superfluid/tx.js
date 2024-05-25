@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MsgClientImpl = exports.MsgUnbondConvertAndStakeResponse = exports.MsgUnbondConvertAndStake = exports.MsgAddToConcentratedLiquiditySuperfluidPositionResponse = exports.MsgAddToConcentratedLiquiditySuperfluidPosition = exports.MsgUnlockAndMigrateSharesToFullRangeConcentratedPositionResponse = exports.MsgUnlockAndMigrateSharesToFullRangeConcentratedPosition = exports.MsgUnPoolWhitelistedPoolResponse = exports.MsgUnPoolWhitelistedPool = exports.MsgCreateFullRangePositionAndSuperfluidDelegateResponse = exports.MsgCreateFullRangePositionAndSuperfluidDelegate = exports.MsgLockAndSuperfluidDelegateResponse = exports.MsgLockAndSuperfluidDelegate = exports.MsgSuperfluidUndelegateAndUnbondLockResponse = exports.MsgSuperfluidUndelegateAndUnbondLock = exports.MsgSuperfluidUnbondLockResponse = exports.MsgSuperfluidUnbondLock = exports.MsgSuperfluidUndelegateResponse = exports.MsgSuperfluidUndelegate = exports.MsgSuperfluidDelegateResponse = exports.MsgSuperfluidDelegate = exports.protobufPackage = void 0;
+exports.MsgClientImpl = exports.MsgUnsetDenomRiskFactorResponse = exports.MsgUnsetDenomRiskFactor = exports.MsgSetDenomRiskFactorResponse = exports.MsgSetDenomRiskFactor = exports.MsgUnbondConvertAndStakeResponse = exports.MsgUnbondConvertAndStake = exports.MsgAddToConcentratedLiquiditySuperfluidPositionResponse = exports.MsgAddToConcentratedLiquiditySuperfluidPosition = exports.MsgUnlockAndMigrateSharesToFullRangeConcentratedPositionResponse = exports.MsgUnlockAndMigrateSharesToFullRangeConcentratedPosition = exports.MsgUnPoolWhitelistedPoolResponse = exports.MsgUnPoolWhitelistedPool = exports.MsgCreateFullRangePositionAndSuperfluidDelegateResponse = exports.MsgCreateFullRangePositionAndSuperfluidDelegate = exports.MsgLockAndSuperfluidDelegateResponse = exports.MsgLockAndSuperfluidDelegate = exports.MsgSuperfluidUndelegateAndUnbondLockResponse = exports.MsgSuperfluidUndelegateAndUnbondLock = exports.MsgSuperfluidUnbondLockResponse = exports.MsgSuperfluidUnbondLock = exports.MsgSuperfluidUndelegateResponse = exports.MsgSuperfluidUndelegate = exports.MsgSuperfluidDelegateResponse = exports.MsgSuperfluidDelegate = exports.protobufPackage = void 0;
 /* eslint-disable */
 const coin_1 = require("../../cosmos/base/v1beta1/coin");
 const timestamp_1 = require("../../google/protobuf/timestamp");
@@ -1317,6 +1317,203 @@ exports.MsgUnbondConvertAndStakeResponse = {
         return message;
     },
 };
+function createBaseMsgSetDenomRiskFactor() {
+    return {
+        sender: "",
+        denom: "",
+        riskFactor: "",
+    };
+}
+exports.MsgSetDenomRiskFactor = {
+    typeUrl: "/osmosis.superfluid.MsgSetDenomRiskFactor",
+    encode(message, writer = binary_1.BinaryWriter.create()) {
+        if (message.sender !== "") {
+            writer.uint32(10).string(message.sender);
+        }
+        if (message.denom !== "") {
+            writer.uint32(18).string(message.denom);
+        }
+        if (message.riskFactor !== "") {
+            writer.uint32(26).string(message.riskFactor);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof binary_1.BinaryReader ? input : new binary_1.BinaryReader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = createBaseMsgSetDenomRiskFactor();
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.sender = reader.string();
+                    break;
+                case 2:
+                    message.denom = reader.string();
+                    break;
+                case 3:
+                    message.riskFactor = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const obj = createBaseMsgSetDenomRiskFactor();
+        if ((0, helpers_1.isSet)(object.sender))
+            obj.sender = String(object.sender);
+        if ((0, helpers_1.isSet)(object.denom))
+            obj.denom = String(object.denom);
+        if ((0, helpers_1.isSet)(object.riskFactor))
+            obj.riskFactor = String(object.riskFactor);
+        return obj;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.sender !== undefined && (obj.sender = message.sender);
+        message.denom !== undefined && (obj.denom = message.denom);
+        message.riskFactor !== undefined && (obj.riskFactor = message.riskFactor);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = createBaseMsgSetDenomRiskFactor();
+        message.sender = object.sender ?? "";
+        message.denom = object.denom ?? "";
+        message.riskFactor = object.riskFactor ?? "";
+        return message;
+    },
+};
+function createBaseMsgSetDenomRiskFactorResponse() {
+    return {};
+}
+exports.MsgSetDenomRiskFactorResponse = {
+    typeUrl: "/osmosis.superfluid.MsgSetDenomRiskFactorResponse",
+    encode(_, writer = binary_1.BinaryWriter.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof binary_1.BinaryReader ? input : new binary_1.BinaryReader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = createBaseMsgSetDenomRiskFactorResponse();
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const obj = createBaseMsgSetDenomRiskFactorResponse();
+        return obj;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = createBaseMsgSetDenomRiskFactorResponse();
+        return message;
+    },
+};
+function createBaseMsgUnsetDenomRiskFactor() {
+    return {
+        sender: "",
+        denom: "",
+    };
+}
+exports.MsgUnsetDenomRiskFactor = {
+    typeUrl: "/osmosis.superfluid.MsgUnsetDenomRiskFactor",
+    encode(message, writer = binary_1.BinaryWriter.create()) {
+        if (message.sender !== "") {
+            writer.uint32(10).string(message.sender);
+        }
+        if (message.denom !== "") {
+            writer.uint32(18).string(message.denom);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof binary_1.BinaryReader ? input : new binary_1.BinaryReader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = createBaseMsgUnsetDenomRiskFactor();
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.sender = reader.string();
+                    break;
+                case 2:
+                    message.denom = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const obj = createBaseMsgUnsetDenomRiskFactor();
+        if ((0, helpers_1.isSet)(object.sender))
+            obj.sender = String(object.sender);
+        if ((0, helpers_1.isSet)(object.denom))
+            obj.denom = String(object.denom);
+        return obj;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.sender !== undefined && (obj.sender = message.sender);
+        message.denom !== undefined && (obj.denom = message.denom);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = createBaseMsgUnsetDenomRiskFactor();
+        message.sender = object.sender ?? "";
+        message.denom = object.denom ?? "";
+        return message;
+    },
+};
+function createBaseMsgUnsetDenomRiskFactorResponse() {
+    return {};
+}
+exports.MsgUnsetDenomRiskFactorResponse = {
+    typeUrl: "/osmosis.superfluid.MsgUnsetDenomRiskFactorResponse",
+    encode(_, writer = binary_1.BinaryWriter.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof binary_1.BinaryReader ? input : new binary_1.BinaryReader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = createBaseMsgUnsetDenomRiskFactorResponse();
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const obj = createBaseMsgUnsetDenomRiskFactorResponse();
+        return obj;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = createBaseMsgUnsetDenomRiskFactorResponse();
+        return message;
+    },
+};
 class MsgClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -1333,6 +1530,8 @@ class MsgClientImpl {
         this.AddToConcentratedLiquiditySuperfluidPosition =
             this.AddToConcentratedLiquiditySuperfluidPosition.bind(this);
         this.UnbondConvertAndStake = this.UnbondConvertAndStake.bind(this);
+        this.SetDenomRiskFactor = this.SetDenomRiskFactor.bind(this);
+        this.UnsetDenomRiskFactor = this.UnsetDenomRiskFactor.bind(this);
     }
     SuperfluidDelegate(request) {
         const data = exports.MsgSuperfluidDelegate.encode(request).finish();
@@ -1383,6 +1582,16 @@ class MsgClientImpl {
         const data = exports.MsgUnbondConvertAndStake.encode(request).finish();
         const promise = this.rpc.request("osmosis.superfluid.Msg", "UnbondConvertAndStake", data);
         return promise.then((data) => exports.MsgUnbondConvertAndStakeResponse.decode(new binary_1.BinaryReader(data)));
+    }
+    SetDenomRiskFactor(request) {
+        const data = exports.MsgSetDenomRiskFactor.encode(request).finish();
+        const promise = this.rpc.request("osmosis.superfluid.Msg", "SetDenomRiskFactor", data);
+        return promise.then((data) => exports.MsgSetDenomRiskFactorResponse.decode(new binary_1.BinaryReader(data)));
+    }
+    UnsetDenomRiskFactor(request) {
+        const data = exports.MsgUnsetDenomRiskFactor.encode(request).finish();
+        const promise = this.rpc.request("osmosis.superfluid.Msg", "UnsetDenomRiskFactor", data);
+        return promise.then((data) => exports.MsgUnsetDenomRiskFactorResponse.decode(new binary_1.BinaryReader(data)));
     }
 }
 exports.MsgClientImpl = MsgClientImpl;

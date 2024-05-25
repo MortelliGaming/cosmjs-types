@@ -41,6 +41,7 @@ export declare const SetSuperfluidAssetsProposal: {
         assets?: {
             denom?: string | undefined;
             assetType?: import("../superfluid").SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         }[] | undefined;
     } & {
         title?: string | undefined;
@@ -48,15 +49,19 @@ export declare const SetSuperfluidAssetsProposal: {
         assets?: ({
             denom?: string | undefined;
             assetType?: import("../superfluid").SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         }[] & ({
             denom?: string | undefined;
             assetType?: import("../superfluid").SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         } & {
             denom?: string | undefined;
             assetType?: import("../superfluid").SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         } & Record<Exclude<keyof I["assets"][number], keyof SuperfluidAsset>, never>)[] & Record<Exclude<keyof I["assets"], keyof {
             denom?: string | undefined;
             assetType?: import("../superfluid").SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         }[]>, never>) | undefined;
     } & Record<Exclude<keyof I, keyof SetSuperfluidAssetsProposal>, never>>(object: I): SetSuperfluidAssetsProposal;
 };

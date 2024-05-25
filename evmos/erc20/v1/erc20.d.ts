@@ -112,10 +112,6 @@ export declare const RegisterCoinProposal: {
             }[] | undefined;
             base?: string | undefined;
             display?: string | undefined;
-            name?: string | undefined;
-            symbol?: string | undefined;
-            uri?: string | undefined;
-            uriHash?: string | undefined;
         }[] | undefined;
     } & {
         title?: string | undefined;
@@ -129,10 +125,6 @@ export declare const RegisterCoinProposal: {
             }[] | undefined;
             base?: string | undefined;
             display?: string | undefined;
-            name?: string | undefined;
-            symbol?: string | undefined;
-            uri?: string | undefined;
-            uriHash?: string | undefined;
         }[] & ({
             description?: string | undefined;
             denomUnits?: {
@@ -142,10 +134,6 @@ export declare const RegisterCoinProposal: {
             }[] | undefined;
             base?: string | undefined;
             display?: string | undefined;
-            name?: string | undefined;
-            symbol?: string | undefined;
-            uri?: string | undefined;
-            uriHash?: string | undefined;
         } & {
             description?: string | undefined;
             denomUnits?: ({
@@ -167,10 +155,6 @@ export declare const RegisterCoinProposal: {
             }[]>, never>) | undefined;
             base?: string | undefined;
             display?: string | undefined;
-            name?: string | undefined;
-            symbol?: string | undefined;
-            uri?: string | undefined;
-            uriHash?: string | undefined;
         } & Record<Exclude<keyof I["metadata"][number], keyof Metadata>, never>)[] & Record<Exclude<keyof I["metadata"], keyof {
             description?: string | undefined;
             denomUnits?: {
@@ -180,10 +164,6 @@ export declare const RegisterCoinProposal: {
             }[] | undefined;
             base?: string | undefined;
             display?: string | undefined;
-            name?: string | undefined;
-            symbol?: string | undefined;
-            uri?: string | undefined;
-            uriHash?: string | undefined;
         }[]>, never>) | undefined;
     } & Record<Exclude<keyof I, keyof RegisterCoinProposal>, never>>(object: I): RegisterCoinProposal;
 };
@@ -203,10 +183,6 @@ export declare const ProposalMetadata: {
             }[] | undefined;
             base?: string | undefined;
             display?: string | undefined;
-            name?: string | undefined;
-            symbol?: string | undefined;
-            uri?: string | undefined;
-            uriHash?: string | undefined;
         }[] | undefined;
     } & {
         metadata?: ({
@@ -218,10 +194,6 @@ export declare const ProposalMetadata: {
             }[] | undefined;
             base?: string | undefined;
             display?: string | undefined;
-            name?: string | undefined;
-            symbol?: string | undefined;
-            uri?: string | undefined;
-            uriHash?: string | undefined;
         }[] & ({
             description?: string | undefined;
             denomUnits?: {
@@ -231,10 +203,6 @@ export declare const ProposalMetadata: {
             }[] | undefined;
             base?: string | undefined;
             display?: string | undefined;
-            name?: string | undefined;
-            symbol?: string | undefined;
-            uri?: string | undefined;
-            uriHash?: string | undefined;
         } & {
             description?: string | undefined;
             denomUnits?: ({
@@ -256,10 +224,6 @@ export declare const ProposalMetadata: {
             }[]>, never>) | undefined;
             base?: string | undefined;
             display?: string | undefined;
-            name?: string | undefined;
-            symbol?: string | undefined;
-            uri?: string | undefined;
-            uriHash?: string | undefined;
         } & Record<Exclude<keyof I["metadata"][number], keyof Metadata>, never>)[] & Record<Exclude<keyof I["metadata"], keyof {
             description?: string | undefined;
             denomUnits?: {
@@ -269,10 +233,6 @@ export declare const ProposalMetadata: {
             }[] | undefined;
             base?: string | undefined;
             display?: string | undefined;
-            name?: string | undefined;
-            symbol?: string | undefined;
-            uri?: string | undefined;
-            uriHash?: string | undefined;
         }[]>, never>) | undefined;
     } & Record<Exclude<keyof I, "metadata">, never>>(object: I): ProposalMetadata;
 };

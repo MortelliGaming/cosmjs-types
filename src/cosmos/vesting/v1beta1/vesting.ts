@@ -13,7 +13,6 @@ export interface BaseVestingAccount {
   originalVesting: Coin[];
   delegatedFree: Coin[];
   delegatedVesting: Coin[];
-  /** Vesting end time, as unix timestamp (in seconds). */
   endTime: bigint;
 }
 /**
@@ -22,7 +21,6 @@ export interface BaseVestingAccount {
  */
 export interface ContinuousVestingAccount {
   baseVestingAccount?: BaseVestingAccount;
-  /** Vesting start time, as unix timestamp (in seconds). */
   startTime: bigint;
 }
 /**
@@ -35,7 +33,6 @@ export interface DelayedVestingAccount {
 }
 /** Period defines a length of time and amount of coins that will vest. */
 export interface Period {
-  /** Period duration in seconds. */
   length: bigint;
   amount: Coin[];
 }
@@ -47,16 +44,6 @@ export interface PeriodicVestingAccount {
   baseVestingAccount?: BaseVestingAccount;
   startTime: bigint;
   vestingPeriods: Period[];
-}
-/**
- * PermanentLockedAccount implements the VestingAccount interface. It does
- * not ever release coins, locking them indefinitely. Coins in this account can
- * still be used for delegating and for governance votes even while locked.
- *
- * Since: cosmos-sdk 0.43
- */
-export interface PermanentLockedAccount {
-  baseVestingAccount?: BaseVestingAccount;
 }
 function createBaseBaseVestingAccount(): BaseVestingAccount {
   return {
@@ -420,58 +407,6 @@ export const PeriodicVestingAccount = {
       message.startTime = BigInt(object.startTime.toString());
     }
     message.vestingPeriods = object.vestingPeriods?.map((e) => Period.fromPartial(e)) || [];
-    return message;
-  },
-};
-function createBasePermanentLockedAccount(): PermanentLockedAccount {
-  return {
-    baseVestingAccount: undefined,
-  };
-}
-export const PermanentLockedAccount = {
-  typeUrl: "/cosmos.vesting.v1beta1.PermanentLockedAccount",
-  encode(message: PermanentLockedAccount, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.baseVestingAccount !== undefined) {
-      BaseVestingAccount.encode(message.baseVestingAccount, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): PermanentLockedAccount {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBasePermanentLockedAccount();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.baseVestingAccount = BaseVestingAccount.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): PermanentLockedAccount {
-    const obj = createBasePermanentLockedAccount();
-    if (isSet(object.baseVestingAccount))
-      obj.baseVestingAccount = BaseVestingAccount.fromJSON(object.baseVestingAccount);
-    return obj;
-  },
-  toJSON(message: PermanentLockedAccount): unknown {
-    const obj: any = {};
-    message.baseVestingAccount !== undefined &&
-      (obj.baseVestingAccount = message.baseVestingAccount
-        ? BaseVestingAccount.toJSON(message.baseVestingAccount)
-        : undefined);
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<PermanentLockedAccount>, I>>(object: I): PermanentLockedAccount {
-    const message = createBasePermanentLockedAccount();
-    if (object.baseVestingAccount !== undefined && object.baseVestingAccount !== null) {
-      message.baseVestingAccount = BaseVestingAccount.fromPartial(object.baseVestingAccount);
-    }
     return message;
   },
 };

@@ -36,12 +36,6 @@ export interface PageRequest {
    * is set.
    */
   countTotal: boolean;
-  /**
-   * reverse is set to true if results are to be returned in the descending order.
-   *
-   * Since: cosmos-sdk 0.43
-   */
-  reverse: boolean;
 }
 /**
  * PageResponse is to be embedded in gRPC response messages where the
@@ -55,8 +49,7 @@ export interface PageRequest {
 export interface PageResponse {
   /**
    * next_key is the key to be passed to PageRequest.key to
-   * query the next page most efficiently. It will be empty if
-   * there are no more results.
+   * query the next page most efficiently
    */
   nextKey: Uint8Array;
   /**
@@ -71,7 +64,6 @@ function createBasePageRequest(): PageRequest {
     offset: BigInt(0),
     limit: BigInt(0),
     countTotal: false,
-    reverse: false,
   };
 }
 export const PageRequest = {
@@ -88,9 +80,6 @@ export const PageRequest = {
     }
     if (message.countTotal === true) {
       writer.uint32(32).bool(message.countTotal);
-    }
-    if (message.reverse === true) {
-      writer.uint32(40).bool(message.reverse);
     }
     return writer;
   },
@@ -113,9 +102,6 @@ export const PageRequest = {
         case 4:
           message.countTotal = reader.bool();
           break;
-        case 5:
-          message.reverse = reader.bool();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -129,7 +115,6 @@ export const PageRequest = {
     if (isSet(object.offset)) obj.offset = BigInt(object.offset.toString());
     if (isSet(object.limit)) obj.limit = BigInt(object.limit.toString());
     if (isSet(object.countTotal)) obj.countTotal = Boolean(object.countTotal);
-    if (isSet(object.reverse)) obj.reverse = Boolean(object.reverse);
     return obj;
   },
   toJSON(message: PageRequest): unknown {
@@ -139,7 +124,6 @@ export const PageRequest = {
     message.offset !== undefined && (obj.offset = (message.offset || BigInt(0)).toString());
     message.limit !== undefined && (obj.limit = (message.limit || BigInt(0)).toString());
     message.countTotal !== undefined && (obj.countTotal = message.countTotal);
-    message.reverse !== undefined && (obj.reverse = message.reverse);
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<PageRequest>, I>>(object: I): PageRequest {
@@ -152,7 +136,6 @@ export const PageRequest = {
       message.limit = BigInt(object.limit.toString());
     }
     message.countTotal = object.countTotal ?? false;
-    message.reverse = object.reverse ?? false;
     return message;
   },
 };

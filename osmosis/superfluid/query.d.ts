@@ -207,20 +207,25 @@ export declare const AllAssetsResponse: {
         assets?: {
             denom?: string | undefined;
             assetType?: SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         }[] | undefined;
     } & {
         assets?: ({
             denom?: string | undefined;
             assetType?: SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         }[] & ({
             denom?: string | undefined;
             assetType?: SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         } & {
             denom?: string | undefined;
             assetType?: SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         } & Record<Exclude<keyof I["assets"][number], keyof SuperfluidAsset>, never>)[] & Record<Exclude<keyof I["assets"], keyof {
             denom?: string | undefined;
             assetType?: SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         }[]>, never>) | undefined;
     } & Record<Exclude<keyof I, "assets">, never>>(object: I): AllAssetsResponse;
 };
@@ -290,7 +295,6 @@ export declare const AllIntermediaryAccountsRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } | undefined;
     } & {
         pagination?: ({
@@ -298,13 +302,11 @@ export declare const AllIntermediaryAccountsRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & {
             key?: Uint8Array | undefined;
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & Record<Exclude<keyof I["pagination"], keyof PageRequest>, never>) | undefined;
     } & Record<Exclude<keyof I, "pagination">, never>>(object: I): AllIntermediaryAccountsRequest;
 };

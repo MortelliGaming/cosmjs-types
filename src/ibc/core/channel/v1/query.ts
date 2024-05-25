@@ -173,8 +173,8 @@ export interface QueryPacketReceiptRequest {
   sequence: bigint;
 }
 /**
- * QueryPacketReceiptResponse defines the client query response for a packet
- * receipt which also includes a proof, and the height from which the proof was
+ * QueryPacketReceiptResponse defines the client query response for a packet receipt
+ * which also includes a proof, and the height from which the proof was
  * retrieved
  */
 export interface QueryPacketReceiptResponse {
@@ -221,8 +221,6 @@ export interface QueryPacketAcknowledgementsRequest {
   channelId: string;
   /** pagination request */
   pagination?: PageRequest;
-  /** list of packet sequences */
-  packetCommitmentSequences: bigint[];
 }
 /**
  * QueryPacketAcknowledgemetsResponse is the request type for the
@@ -1612,7 +1610,6 @@ function createBaseQueryPacketAcknowledgementsRequest(): QueryPacketAcknowledgem
     portId: "",
     channelId: "",
     pagination: undefined,
-    packetCommitmentSequences: [],
   };
 }
 export const QueryPacketAcknowledgementsRequest = {
@@ -1630,11 +1627,6 @@ export const QueryPacketAcknowledgementsRequest = {
     if (message.pagination !== undefined) {
       PageRequest.encode(message.pagination, writer.uint32(26).fork()).ldelim();
     }
-    writer.uint32(34).fork();
-    for (const v of message.packetCommitmentSequences) {
-      writer.uint64(v);
-    }
-    writer.ldelim();
     return writer;
   },
   decode(input: BinaryReader | Uint8Array, length?: number): QueryPacketAcknowledgementsRequest {
@@ -1653,16 +1645,6 @@ export const QueryPacketAcknowledgementsRequest = {
         case 3:
           message.pagination = PageRequest.decode(reader, reader.uint32());
           break;
-        case 4:
-          if ((tag & 7) === 2) {
-            const end2 = reader.uint32() + reader.pos;
-            while (reader.pos < end2) {
-              message.packetCommitmentSequences.push(reader.uint64());
-            }
-          } else {
-            message.packetCommitmentSequences.push(reader.uint64());
-          }
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1675,8 +1657,6 @@ export const QueryPacketAcknowledgementsRequest = {
     if (isSet(object.portId)) obj.portId = String(object.portId);
     if (isSet(object.channelId)) obj.channelId = String(object.channelId);
     if (isSet(object.pagination)) obj.pagination = PageRequest.fromJSON(object.pagination);
-    if (Array.isArray(object?.packetCommitmentSequences))
-      obj.packetCommitmentSequences = object.packetCommitmentSequences.map((e: any) => BigInt(e.toString()));
     return obj;
   },
   toJSON(message: QueryPacketAcknowledgementsRequest): unknown {
@@ -1685,13 +1665,6 @@ export const QueryPacketAcknowledgementsRequest = {
     message.channelId !== undefined && (obj.channelId = message.channelId);
     message.pagination !== undefined &&
       (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
-    if (message.packetCommitmentSequences) {
-      obj.packetCommitmentSequences = message.packetCommitmentSequences.map((e) =>
-        (e || BigInt(0)).toString(),
-      );
-    } else {
-      obj.packetCommitmentSequences = [];
-    }
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<QueryPacketAcknowledgementsRequest>, I>>(
@@ -1703,8 +1676,6 @@ export const QueryPacketAcknowledgementsRequest = {
     if (object.pagination !== undefined && object.pagination !== null) {
       message.pagination = PageRequest.fromPartial(object.pagination);
     }
-    message.packetCommitmentSequences =
-      object.packetCommitmentSequences?.map((e) => BigInt(e.toString())) || [];
     return message;
   },
 };
@@ -2277,10 +2248,7 @@ export interface Query {
    * with a channel.
    */
   PacketCommitments(request: QueryPacketCommitmentsRequest): Promise<QueryPacketCommitmentsResponse>;
-  /**
-   * PacketReceipt queries if a given packet sequence has been received on the
-   * queried chain
-   */
+  /** PacketReceipt queries if a given packet sequence has been received on the queried chain */
   PacketReceipt(request: QueryPacketReceiptRequest): Promise<QueryPacketReceiptResponse>;
   /** PacketAcknowledgement queries a stored packet acknowledgement hash. */
   PacketAcknowledgement(
@@ -2299,8 +2267,8 @@ export interface Query {
    */
   UnreceivedPackets(request: QueryUnreceivedPacketsRequest): Promise<QueryUnreceivedPacketsResponse>;
   /**
-   * UnreceivedAcks returns all the unreceived IBC acknowledgements associated
-   * with a channel and sequences.
+   * UnreceivedAcks returns all the unreceived IBC acknowledgements associated with a
+   * channel and sequences.
    */
   UnreceivedAcks(request: QueryUnreceivedAcksRequest): Promise<QueryUnreceivedAcksResponse>;
   /** NextSequenceReceive returns the next receive sequence for a given channel. */

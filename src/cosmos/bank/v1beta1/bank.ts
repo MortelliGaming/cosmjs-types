@@ -5,14 +5,6 @@ import { isSet, DeepPartial, Exact } from "../../../helpers";
 export const protobufPackage = "cosmos.bank.v1beta1";
 /** Params defines the parameters for the bank module. */
 export interface Params {
-  /**
-   * Deprecated: Use of SendEnabled in params is deprecated.
-   * For genesis, use the newly added send_enabled field in the genesis object.
-   * Storage, lookup, and manipulation of this information is now in the keeper.
-   *
-   * As of cosmos-sdk 0.47, this only exists for backwards compatibility of genesis files.
-   */
-  /** @deprecated */
   sendEnabled: SendEnabled[];
   defaultSendEnabled: boolean;
 }
@@ -37,9 +29,7 @@ export interface Output {
 /**
  * Supply represents a struct that passively keeps track of the total supply
  * amounts in the network.
- * This message is deprecated now that supply is indexed by denom.
  */
-/** @deprecated */
 export interface Supply {
   total: Coin[];
 }
@@ -53,7 +43,7 @@ export interface DenomUnit {
   /**
    * exponent represents power of 10 exponent that one must
    * raise the base_denom to in order to equal the given DenomUnit's denom
-   * 1 denom = 10^exponent base_denom
+   * 1 denom = 1^exponent base_denom
    * (e.g. with a base_denom of uatom, one can create a DenomUnit of 'atom' with
    * exponent = 6, thus: 1 atom = 10^6 uatom).
    */
@@ -76,32 +66,6 @@ export interface Metadata {
    * displayed in clients.
    */
   display: string;
-  /**
-   * name defines the name of the token (eg: Cosmos Atom)
-   *
-   * Since: cosmos-sdk 0.43
-   */
-  name: string;
-  /**
-   * symbol is the token symbol usually shown on exchanges (eg: ATOM). This can
-   * be the same as the display.
-   *
-   * Since: cosmos-sdk 0.43
-   */
-  symbol: string;
-  /**
-   * URI to a document (on or off-chain) that contains additional information. Optional.
-   *
-   * Since: cosmos-sdk 0.46
-   */
-  uri: string;
-  /**
-   * URIHash is a sha256 hash of a document pointed by URI. It's used to verify that
-   * the document didn't change. Optional.
-   *
-   * Since: cosmos-sdk 0.46
-   */
-  uriHash: string;
 }
 function createBaseParams(): Params {
   return {
@@ -466,10 +430,6 @@ function createBaseMetadata(): Metadata {
     denomUnits: [],
     base: "",
     display: "",
-    name: "",
-    symbol: "",
-    uri: "",
-    uriHash: "",
   };
 }
 export const Metadata = {
@@ -486,18 +446,6 @@ export const Metadata = {
     }
     if (message.display !== "") {
       writer.uint32(34).string(message.display);
-    }
-    if (message.name !== "") {
-      writer.uint32(42).string(message.name);
-    }
-    if (message.symbol !== "") {
-      writer.uint32(50).string(message.symbol);
-    }
-    if (message.uri !== "") {
-      writer.uint32(58).string(message.uri);
-    }
-    if (message.uriHash !== "") {
-      writer.uint32(66).string(message.uriHash);
     }
     return writer;
   },
@@ -520,18 +468,6 @@ export const Metadata = {
         case 4:
           message.display = reader.string();
           break;
-        case 5:
-          message.name = reader.string();
-          break;
-        case 6:
-          message.symbol = reader.string();
-          break;
-        case 7:
-          message.uri = reader.string();
-          break;
-        case 8:
-          message.uriHash = reader.string();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -546,10 +482,6 @@ export const Metadata = {
       obj.denomUnits = object.denomUnits.map((e: any) => DenomUnit.fromJSON(e));
     if (isSet(object.base)) obj.base = String(object.base);
     if (isSet(object.display)) obj.display = String(object.display);
-    if (isSet(object.name)) obj.name = String(object.name);
-    if (isSet(object.symbol)) obj.symbol = String(object.symbol);
-    if (isSet(object.uri)) obj.uri = String(object.uri);
-    if (isSet(object.uriHash)) obj.uriHash = String(object.uriHash);
     return obj;
   },
   toJSON(message: Metadata): unknown {
@@ -562,10 +494,6 @@ export const Metadata = {
     }
     message.base !== undefined && (obj.base = message.base);
     message.display !== undefined && (obj.display = message.display);
-    message.name !== undefined && (obj.name = message.name);
-    message.symbol !== undefined && (obj.symbol = message.symbol);
-    message.uri !== undefined && (obj.uri = message.uri);
-    message.uriHash !== undefined && (obj.uriHash = message.uriHash);
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<Metadata>, I>>(object: I): Metadata {
@@ -574,10 +502,6 @@ export const Metadata = {
     message.denomUnits = object.denomUnits?.map((e) => DenomUnit.fromPartial(e)) || [];
     message.base = object.base ?? "";
     message.display = object.display ?? "";
-    message.name = object.name ?? "";
-    message.symbol = object.symbol ?? "";
-    message.uri = object.uri ?? "";
-    message.uriHash = object.uriHash ?? "";
     return message;
   },
 };

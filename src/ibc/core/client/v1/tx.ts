@@ -19,31 +19,25 @@ export interface MsgCreateClient {
 export interface MsgCreateClientResponse {}
 /**
  * MsgUpdateClient defines an sdk.Msg to update a IBC client state using
- * the given client message.
+ * the given header.
  */
 export interface MsgUpdateClient {
   /** client unique identifier */
   clientId: string;
-  /** client message to update the light client */
-  clientMessage?: Any;
+  /** header to update the light client */
+  header?: Any;
   /** signer address */
   signer: string;
 }
 /** MsgUpdateClientResponse defines the Msg/UpdateClient response type. */
 export interface MsgUpdateClientResponse {}
-/**
- * MsgUpgradeClient defines an sdk.Msg to upgrade an IBC client to a new client
- * state
- */
+/** MsgUpgradeClient defines an sdk.Msg to upgrade an IBC client to a new client state */
 export interface MsgUpgradeClient {
   /** client unique identifier */
   clientId: string;
   /** upgraded client state */
   clientState?: Any;
-  /**
-   * upgraded consensus state, only contains enough information to serve as a
-   * basis of trust in update logic
-   */
+  /** upgraded consensus state, only contains enough information to serve as a basis of trust in update logic */
   consensusState?: Any;
   /** proof that old chain committed to new client */
   proofUpgradeClient: Uint8Array;
@@ -57,23 +51,16 @@ export interface MsgUpgradeClientResponse {}
 /**
  * MsgSubmitMisbehaviour defines an sdk.Msg type that submits Evidence for
  * light client misbehaviour.
- * Warning: DEPRECATED
  */
 export interface MsgSubmitMisbehaviour {
   /** client unique identifier */
-  /** @deprecated */
   clientId: string;
   /** misbehaviour used for freezing the light client */
-  /** @deprecated */
   misbehaviour?: Any;
   /** signer address */
-  /** @deprecated */
   signer: string;
 }
-/**
- * MsgSubmitMisbehaviourResponse defines the Msg/SubmitMisbehaviour response
- * type.
- */
+/** MsgSubmitMisbehaviourResponse defines the Msg/SubmitMisbehaviour response type. */
 export interface MsgSubmitMisbehaviourResponse {}
 function createBaseMsgCreateClient(): MsgCreateClient {
   return {
@@ -185,7 +172,7 @@ export const MsgCreateClientResponse = {
 function createBaseMsgUpdateClient(): MsgUpdateClient {
   return {
     clientId: "",
-    clientMessage: undefined,
+    header: undefined,
     signer: "",
   };
 }
@@ -195,8 +182,8 @@ export const MsgUpdateClient = {
     if (message.clientId !== "") {
       writer.uint32(10).string(message.clientId);
     }
-    if (message.clientMessage !== undefined) {
-      Any.encode(message.clientMessage, writer.uint32(18).fork()).ldelim();
+    if (message.header !== undefined) {
+      Any.encode(message.header, writer.uint32(18).fork()).ldelim();
     }
     if (message.signer !== "") {
       writer.uint32(26).string(message.signer);
@@ -214,7 +201,7 @@ export const MsgUpdateClient = {
           message.clientId = reader.string();
           break;
         case 2:
-          message.clientMessage = Any.decode(reader, reader.uint32());
+          message.header = Any.decode(reader, reader.uint32());
           break;
         case 3:
           message.signer = reader.string();
@@ -229,23 +216,22 @@ export const MsgUpdateClient = {
   fromJSON(object: any): MsgUpdateClient {
     const obj = createBaseMsgUpdateClient();
     if (isSet(object.clientId)) obj.clientId = String(object.clientId);
-    if (isSet(object.clientMessage)) obj.clientMessage = Any.fromJSON(object.clientMessage);
+    if (isSet(object.header)) obj.header = Any.fromJSON(object.header);
     if (isSet(object.signer)) obj.signer = String(object.signer);
     return obj;
   },
   toJSON(message: MsgUpdateClient): unknown {
     const obj: any = {};
     message.clientId !== undefined && (obj.clientId = message.clientId);
-    message.clientMessage !== undefined &&
-      (obj.clientMessage = message.clientMessage ? Any.toJSON(message.clientMessage) : undefined);
+    message.header !== undefined && (obj.header = message.header ? Any.toJSON(message.header) : undefined);
     message.signer !== undefined && (obj.signer = message.signer);
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<MsgUpdateClient>, I>>(object: I): MsgUpdateClient {
     const message = createBaseMsgUpdateClient();
     message.clientId = object.clientId ?? "";
-    if (object.clientMessage !== undefined && object.clientMessage !== null) {
-      message.clientMessage = Any.fromPartial(object.clientMessage);
+    if (object.header !== undefined && object.header !== null) {
+      message.header = Any.fromPartial(object.header);
     }
     message.signer = object.signer ?? "";
     return message;

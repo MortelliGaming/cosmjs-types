@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { Coin } from "../../base/v1beta1/coin";
-import { Params } from "./distribution";
 import { BinaryReader, BinaryWriter } from "../../../binary";
 import { isSet, DeepPartial, Exact, Rpc } from "../../../helpers";
 export const protobufPackage = "cosmos.distribution.v1beta1";
@@ -12,10 +11,7 @@ export interface MsgSetWithdrawAddress {
   delegatorAddress: string;
   withdrawAddress: string;
 }
-/**
- * MsgSetWithdrawAddressResponse defines the Msg/SetWithdrawAddress response
- * type.
- */
+/** MsgSetWithdrawAddressResponse defines the Msg/SetWithdrawAddress response type. */
 export interface MsgSetWithdrawAddressResponse {}
 /**
  * MsgWithdrawDelegatorReward represents delegation withdrawal to a delegator
@@ -25,14 +21,8 @@ export interface MsgWithdrawDelegatorReward {
   delegatorAddress: string;
   validatorAddress: string;
 }
-/**
- * MsgWithdrawDelegatorRewardResponse defines the Msg/WithdrawDelegatorReward
- * response type.
- */
-export interface MsgWithdrawDelegatorRewardResponse {
-  /** Since: cosmos-sdk 0.46 */
-  amount: Coin[];
-}
+/** MsgWithdrawDelegatorRewardResponse defines the Msg/WithdrawDelegatorReward response type. */
+export interface MsgWithdrawDelegatorRewardResponse {}
 /**
  * MsgWithdrawValidatorCommission withdraws the full commission to the validator
  * address.
@@ -40,14 +30,8 @@ export interface MsgWithdrawDelegatorRewardResponse {
 export interface MsgWithdrawValidatorCommission {
   validatorAddress: string;
 }
-/**
- * MsgWithdrawValidatorCommissionResponse defines the
- * Msg/WithdrawValidatorCommission response type.
- */
-export interface MsgWithdrawValidatorCommissionResponse {
-  /** Since: cosmos-sdk 0.46 */
-  amount: Coin[];
-}
+/** MsgWithdrawValidatorCommissionResponse defines the Msg/WithdrawValidatorCommission response type. */
+export interface MsgWithdrawValidatorCommissionResponse {}
 /**
  * MsgFundCommunityPool allows an account to directly
  * fund the community pool.
@@ -58,48 +42,6 @@ export interface MsgFundCommunityPool {
 }
 /** MsgFundCommunityPoolResponse defines the Msg/FundCommunityPool response type. */
 export interface MsgFundCommunityPoolResponse {}
-/**
- * MsgUpdateParams is the Msg/UpdateParams request type.
- *
- * Since: cosmos-sdk 0.47
- */
-export interface MsgUpdateParams {
-  /** authority is the address that controls the module (defaults to x/gov unless overwritten). */
-  authority: string;
-  /**
-   * params defines the x/distribution parameters to update.
-   *
-   * NOTE: All parameters must be supplied.
-   */
-  params: Params;
-}
-/**
- * MsgUpdateParamsResponse defines the response structure for executing a
- * MsgUpdateParams message.
- *
- * Since: cosmos-sdk 0.47
- */
-export interface MsgUpdateParamsResponse {}
-/**
- * MsgCommunityPoolSpend defines a message for sending tokens from the community
- * pool to another account. This message is typically executed via a governance
- * proposal with the governance module being the executing authority.
- *
- * Since: cosmos-sdk 0.47
- */
-export interface MsgCommunityPoolSpend {
-  /** authority is the address that controls the module (defaults to x/gov unless overwritten). */
-  authority: string;
-  recipient: string;
-  amount: Coin[];
-}
-/**
- * MsgCommunityPoolSpendResponse defines the response to executing a
- * MsgCommunityPoolSpend message.
- *
- * Since: cosmos-sdk 0.47
- */
-export interface MsgCommunityPoolSpendResponse {}
 function createBaseMsgSetWithdrawAddress(): MsgSetWithdrawAddress {
   return {
     delegatorAddress: "",
@@ -252,19 +194,11 @@ export const MsgWithdrawDelegatorReward = {
   },
 };
 function createBaseMsgWithdrawDelegatorRewardResponse(): MsgWithdrawDelegatorRewardResponse {
-  return {
-    amount: [],
-  };
+  return {};
 }
 export const MsgWithdrawDelegatorRewardResponse = {
   typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorRewardResponse",
-  encode(
-    message: MsgWithdrawDelegatorRewardResponse,
-    writer: BinaryWriter = BinaryWriter.create(),
-  ): BinaryWriter {
-    for (const v of message.amount) {
-      Coin.encode(v!, writer.uint32(10).fork()).ldelim();
-    }
+  encode(_: MsgWithdrawDelegatorRewardResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
     return writer;
   },
   decode(input: BinaryReader | Uint8Array, length?: number): MsgWithdrawDelegatorRewardResponse {
@@ -274,9 +208,6 @@ export const MsgWithdrawDelegatorRewardResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.amount.push(Coin.decode(reader, reader.uint32()));
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -284,25 +215,18 @@ export const MsgWithdrawDelegatorRewardResponse = {
     }
     return message;
   },
-  fromJSON(object: any): MsgWithdrawDelegatorRewardResponse {
+  fromJSON(_: any): MsgWithdrawDelegatorRewardResponse {
     const obj = createBaseMsgWithdrawDelegatorRewardResponse();
-    if (Array.isArray(object?.amount)) obj.amount = object.amount.map((e: any) => Coin.fromJSON(e));
     return obj;
   },
-  toJSON(message: MsgWithdrawDelegatorRewardResponse): unknown {
+  toJSON(_: MsgWithdrawDelegatorRewardResponse): unknown {
     const obj: any = {};
-    if (message.amount) {
-      obj.amount = message.amount.map((e) => (e ? Coin.toJSON(e) : undefined));
-    } else {
-      obj.amount = [];
-    }
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<MsgWithdrawDelegatorRewardResponse>, I>>(
-    object: I,
+    _: I,
   ): MsgWithdrawDelegatorRewardResponse {
     const message = createBaseMsgWithdrawDelegatorRewardResponse();
-    message.amount = object.amount?.map((e) => Coin.fromPartial(e)) || [];
     return message;
   },
 };
@@ -358,19 +282,14 @@ export const MsgWithdrawValidatorCommission = {
   },
 };
 function createBaseMsgWithdrawValidatorCommissionResponse(): MsgWithdrawValidatorCommissionResponse {
-  return {
-    amount: [],
-  };
+  return {};
 }
 export const MsgWithdrawValidatorCommissionResponse = {
   typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommissionResponse",
   encode(
-    message: MsgWithdrawValidatorCommissionResponse,
+    _: MsgWithdrawValidatorCommissionResponse,
     writer: BinaryWriter = BinaryWriter.create(),
   ): BinaryWriter {
-    for (const v of message.amount) {
-      Coin.encode(v!, writer.uint32(10).fork()).ldelim();
-    }
     return writer;
   },
   decode(input: BinaryReader | Uint8Array, length?: number): MsgWithdrawValidatorCommissionResponse {
@@ -380,9 +299,6 @@ export const MsgWithdrawValidatorCommissionResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.amount.push(Coin.decode(reader, reader.uint32()));
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -390,25 +306,18 @@ export const MsgWithdrawValidatorCommissionResponse = {
     }
     return message;
   },
-  fromJSON(object: any): MsgWithdrawValidatorCommissionResponse {
+  fromJSON(_: any): MsgWithdrawValidatorCommissionResponse {
     const obj = createBaseMsgWithdrawValidatorCommissionResponse();
-    if (Array.isArray(object?.amount)) obj.amount = object.amount.map((e: any) => Coin.fromJSON(e));
     return obj;
   },
-  toJSON(message: MsgWithdrawValidatorCommissionResponse): unknown {
+  toJSON(_: MsgWithdrawValidatorCommissionResponse): unknown {
     const obj: any = {};
-    if (message.amount) {
-      obj.amount = message.amount.map((e) => (e ? Coin.toJSON(e) : undefined));
-    } else {
-      obj.amount = [];
-    }
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<MsgWithdrawValidatorCommissionResponse>, I>>(
-    object: I,
+    _: I,
   ): MsgWithdrawValidatorCommissionResponse {
     const message = createBaseMsgWithdrawValidatorCommissionResponse();
-    message.amount = object.amount?.map((e) => Coin.fromPartial(e)) || [];
     return message;
   },
 };
@@ -509,206 +418,6 @@ export const MsgFundCommunityPoolResponse = {
     return message;
   },
 };
-function createBaseMsgUpdateParams(): MsgUpdateParams {
-  return {
-    authority: "",
-    params: Params.fromPartial({}),
-  };
-}
-export const MsgUpdateParams = {
-  typeUrl: "/cosmos.distribution.v1beta1.MsgUpdateParams",
-  encode(message: MsgUpdateParams, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.authority !== "") {
-      writer.uint32(10).string(message.authority);
-    }
-    if (message.params !== undefined) {
-      Params.encode(message.params, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgUpdateParams {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgUpdateParams();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.authority = reader.string();
-          break;
-        case 2:
-          message.params = Params.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): MsgUpdateParams {
-    const obj = createBaseMsgUpdateParams();
-    if (isSet(object.authority)) obj.authority = String(object.authority);
-    if (isSet(object.params)) obj.params = Params.fromJSON(object.params);
-    return obj;
-  },
-  toJSON(message: MsgUpdateParams): unknown {
-    const obj: any = {};
-    message.authority !== undefined && (obj.authority = message.authority);
-    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<MsgUpdateParams>, I>>(object: I): MsgUpdateParams {
-    const message = createBaseMsgUpdateParams();
-    message.authority = object.authority ?? "";
-    if (object.params !== undefined && object.params !== null) {
-      message.params = Params.fromPartial(object.params);
-    }
-    return message;
-  },
-};
-function createBaseMsgUpdateParamsResponse(): MsgUpdateParamsResponse {
-  return {};
-}
-export const MsgUpdateParamsResponse = {
-  typeUrl: "/cosmos.distribution.v1beta1.MsgUpdateParamsResponse",
-  encode(_: MsgUpdateParamsResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgUpdateParamsResponse {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgUpdateParamsResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(_: any): MsgUpdateParamsResponse {
-    const obj = createBaseMsgUpdateParamsResponse();
-    return obj;
-  },
-  toJSON(_: MsgUpdateParamsResponse): unknown {
-    const obj: any = {};
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<MsgUpdateParamsResponse>, I>>(_: I): MsgUpdateParamsResponse {
-    const message = createBaseMsgUpdateParamsResponse();
-    return message;
-  },
-};
-function createBaseMsgCommunityPoolSpend(): MsgCommunityPoolSpend {
-  return {
-    authority: "",
-    recipient: "",
-    amount: [],
-  };
-}
-export const MsgCommunityPoolSpend = {
-  typeUrl: "/cosmos.distribution.v1beta1.MsgCommunityPoolSpend",
-  encode(message: MsgCommunityPoolSpend, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.authority !== "") {
-      writer.uint32(10).string(message.authority);
-    }
-    if (message.recipient !== "") {
-      writer.uint32(18).string(message.recipient);
-    }
-    for (const v of message.amount) {
-      Coin.encode(v!, writer.uint32(26).fork()).ldelim();
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgCommunityPoolSpend {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgCommunityPoolSpend();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.authority = reader.string();
-          break;
-        case 2:
-          message.recipient = reader.string();
-          break;
-        case 3:
-          message.amount.push(Coin.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): MsgCommunityPoolSpend {
-    const obj = createBaseMsgCommunityPoolSpend();
-    if (isSet(object.authority)) obj.authority = String(object.authority);
-    if (isSet(object.recipient)) obj.recipient = String(object.recipient);
-    if (Array.isArray(object?.amount)) obj.amount = object.amount.map((e: any) => Coin.fromJSON(e));
-    return obj;
-  },
-  toJSON(message: MsgCommunityPoolSpend): unknown {
-    const obj: any = {};
-    message.authority !== undefined && (obj.authority = message.authority);
-    message.recipient !== undefined && (obj.recipient = message.recipient);
-    if (message.amount) {
-      obj.amount = message.amount.map((e) => (e ? Coin.toJSON(e) : undefined));
-    } else {
-      obj.amount = [];
-    }
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<MsgCommunityPoolSpend>, I>>(object: I): MsgCommunityPoolSpend {
-    const message = createBaseMsgCommunityPoolSpend();
-    message.authority = object.authority ?? "";
-    message.recipient = object.recipient ?? "";
-    message.amount = object.amount?.map((e) => Coin.fromPartial(e)) || [];
-    return message;
-  },
-};
-function createBaseMsgCommunityPoolSpendResponse(): MsgCommunityPoolSpendResponse {
-  return {};
-}
-export const MsgCommunityPoolSpendResponse = {
-  typeUrl: "/cosmos.distribution.v1beta1.MsgCommunityPoolSpendResponse",
-  encode(_: MsgCommunityPoolSpendResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgCommunityPoolSpendResponse {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgCommunityPoolSpendResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(_: any): MsgCommunityPoolSpendResponse {
-    const obj = createBaseMsgCommunityPoolSpendResponse();
-    return obj;
-  },
-  toJSON(_: MsgCommunityPoolSpendResponse): unknown {
-    const obj: any = {};
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<MsgCommunityPoolSpendResponse>, I>>(
-    _: I,
-  ): MsgCommunityPoolSpendResponse {
-    const message = createBaseMsgCommunityPoolSpendResponse();
-    return message;
-  },
-};
 /** Msg defines the distribution Msg service. */
 export interface Msg {
   /**
@@ -733,22 +442,6 @@ export interface Msg {
    * fund the community pool.
    */
   FundCommunityPool(request: MsgFundCommunityPool): Promise<MsgFundCommunityPoolResponse>;
-  /**
-   * UpdateParams defines a governance operation for updating the x/distribution
-   * module parameters. The authority is defined in the keeper.
-   *
-   * Since: cosmos-sdk 0.47
-   */
-  UpdateParams(request: MsgUpdateParams): Promise<MsgUpdateParamsResponse>;
-  /**
-   * CommunityPoolSpend defines a governance operation for sending tokens from
-   * the community pool in the x/distribution module to another account, which
-   * could be the governance module itself. The authority is defined in the
-   * keeper.
-   *
-   * Since: cosmos-sdk 0.47
-   */
-  CommunityPoolSpend(request: MsgCommunityPoolSpend): Promise<MsgCommunityPoolSpendResponse>;
 }
 export class MsgClientImpl implements Msg {
   private readonly rpc: Rpc;
@@ -758,8 +451,6 @@ export class MsgClientImpl implements Msg {
     this.WithdrawDelegatorReward = this.WithdrawDelegatorReward.bind(this);
     this.WithdrawValidatorCommission = this.WithdrawValidatorCommission.bind(this);
     this.FundCommunityPool = this.FundCommunityPool.bind(this);
-    this.UpdateParams = this.UpdateParams.bind(this);
-    this.CommunityPoolSpend = this.CommunityPoolSpend.bind(this);
   }
   SetWithdrawAddress(request: MsgSetWithdrawAddress): Promise<MsgSetWithdrawAddressResponse> {
     const data = MsgSetWithdrawAddress.encode(request).finish();
@@ -782,15 +473,5 @@ export class MsgClientImpl implements Msg {
     const data = MsgFundCommunityPool.encode(request).finish();
     const promise = this.rpc.request("cosmos.distribution.v1beta1.Msg", "FundCommunityPool", data);
     return promise.then((data) => MsgFundCommunityPoolResponse.decode(new BinaryReader(data)));
-  }
-  UpdateParams(request: MsgUpdateParams): Promise<MsgUpdateParamsResponse> {
-    const data = MsgUpdateParams.encode(request).finish();
-    const promise = this.rpc.request("cosmos.distribution.v1beta1.Msg", "UpdateParams", data);
-    return promise.then((data) => MsgUpdateParamsResponse.decode(new BinaryReader(data)));
-  }
-  CommunityPoolSpend(request: MsgCommunityPoolSpend): Promise<MsgCommunityPoolSpendResponse> {
-    const data = MsgCommunityPoolSpend.encode(request).finish();
-    const promise = this.rpc.request("cosmos.distribution.v1beta1.Msg", "CommunityPoolSpend", data);
-    return promise.then((data) => MsgCommunityPoolSpendResponse.decode(new BinaryReader(data)));
   }
 }

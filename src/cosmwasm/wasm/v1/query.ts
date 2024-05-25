@@ -188,6 +188,31 @@ export interface QueryContractsByCreatorResponse {
   /** Pagination defines the pagination in the response. */
   pagination?: PageResponse;
 }
+/**
+ * QueryBuildAddressRequest is the request type for the Query/BuildAddress RPC
+ * method.
+ */
+export interface QueryBuildAddressRequest {
+  /** CodeHash is the hash of the code */
+  codeHash: string;
+  /** CreatorAddress is the address of the contract instantiator */
+  creatorAddress: string;
+  /** Salt is a hex encoded salt */
+  salt: string;
+  /**
+   * InitArgs are optional json encoded init args to be used in contract address
+   * building if provided
+   */
+  initArgs: Uint8Array;
+}
+/**
+ * QueryBuildAddressResponse is the response type for the Query/BuildAddress RPC
+ * method.
+ */
+export interface QueryBuildAddressResponse {
+  /** Address is the contract address */
+  address: string;
+}
 function createBaseQueryContractInfoRequest(): QueryContractInfoRequest {
   return {
     address: "",
@@ -1549,6 +1574,133 @@ export const QueryContractsByCreatorResponse = {
     return message;
   },
 };
+function createBaseQueryBuildAddressRequest(): QueryBuildAddressRequest {
+  return {
+    codeHash: "",
+    creatorAddress: "",
+    salt: "",
+    initArgs: new Uint8Array(),
+  };
+}
+export const QueryBuildAddressRequest = {
+  typeUrl: "/cosmwasm.wasm.v1.QueryBuildAddressRequest",
+  encode(message: QueryBuildAddressRequest, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
+    if (message.codeHash !== "") {
+      writer.uint32(10).string(message.codeHash);
+    }
+    if (message.creatorAddress !== "") {
+      writer.uint32(18).string(message.creatorAddress);
+    }
+    if (message.salt !== "") {
+      writer.uint32(26).string(message.salt);
+    }
+    if (message.initArgs.length !== 0) {
+      writer.uint32(34).bytes(message.initArgs);
+    }
+    return writer;
+  },
+  decode(input: BinaryReader | Uint8Array, length?: number): QueryBuildAddressRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryBuildAddressRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.codeHash = reader.string();
+          break;
+        case 2:
+          message.creatorAddress = reader.string();
+          break;
+        case 3:
+          message.salt = reader.string();
+          break;
+        case 4:
+          message.initArgs = reader.bytes();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromJSON(object: any): QueryBuildAddressRequest {
+    const obj = createBaseQueryBuildAddressRequest();
+    if (isSet(object.codeHash)) obj.codeHash = String(object.codeHash);
+    if (isSet(object.creatorAddress)) obj.creatorAddress = String(object.creatorAddress);
+    if (isSet(object.salt)) obj.salt = String(object.salt);
+    if (isSet(object.initArgs)) obj.initArgs = bytesFromBase64(object.initArgs);
+    return obj;
+  },
+  toJSON(message: QueryBuildAddressRequest): unknown {
+    const obj: any = {};
+    message.codeHash !== undefined && (obj.codeHash = message.codeHash);
+    message.creatorAddress !== undefined && (obj.creatorAddress = message.creatorAddress);
+    message.salt !== undefined && (obj.salt = message.salt);
+    message.initArgs !== undefined &&
+      (obj.initArgs = base64FromBytes(message.initArgs !== undefined ? message.initArgs : new Uint8Array()));
+    return obj;
+  },
+  fromPartial<I extends Exact<DeepPartial<QueryBuildAddressRequest>, I>>(
+    object: I,
+  ): QueryBuildAddressRequest {
+    const message = createBaseQueryBuildAddressRequest();
+    message.codeHash = object.codeHash ?? "";
+    message.creatorAddress = object.creatorAddress ?? "";
+    message.salt = object.salt ?? "";
+    message.initArgs = object.initArgs ?? new Uint8Array();
+    return message;
+  },
+};
+function createBaseQueryBuildAddressResponse(): QueryBuildAddressResponse {
+  return {
+    address: "",
+  };
+}
+export const QueryBuildAddressResponse = {
+  typeUrl: "/cosmwasm.wasm.v1.QueryBuildAddressResponse",
+  encode(message: QueryBuildAddressResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
+    if (message.address !== "") {
+      writer.uint32(10).string(message.address);
+    }
+    return writer;
+  },
+  decode(input: BinaryReader | Uint8Array, length?: number): QueryBuildAddressResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryBuildAddressResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.address = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+  fromJSON(object: any): QueryBuildAddressResponse {
+    const obj = createBaseQueryBuildAddressResponse();
+    if (isSet(object.address)) obj.address = String(object.address);
+    return obj;
+  },
+  toJSON(message: QueryBuildAddressResponse): unknown {
+    const obj: any = {};
+    message.address !== undefined && (obj.address = message.address);
+    return obj;
+  },
+  fromPartial<I extends Exact<DeepPartial<QueryBuildAddressResponse>, I>>(
+    object: I,
+  ): QueryBuildAddressResponse {
+    const message = createBaseQueryBuildAddressResponse();
+    message.address = object.address ?? "";
+    return message;
+  },
+};
 /** Query provides defines the gRPC querier service */
 export interface Query {
   /** ContractInfo gets the contract meta data */
@@ -1573,6 +1725,8 @@ export interface Query {
   Params(request?: QueryParamsRequest): Promise<QueryParamsResponse>;
   /** ContractsByCreator gets the contracts by creator */
   ContractsByCreator(request: QueryContractsByCreatorRequest): Promise<QueryContractsByCreatorResponse>;
+  /** BuildAddress builds a contract address */
+  BuildAddress(request: QueryBuildAddressRequest): Promise<QueryBuildAddressResponse>;
 }
 export class QueryClientImpl implements Query {
   private readonly rpc: Rpc;
@@ -1589,6 +1743,7 @@ export class QueryClientImpl implements Query {
     this.PinnedCodes = this.PinnedCodes.bind(this);
     this.Params = this.Params.bind(this);
     this.ContractsByCreator = this.ContractsByCreator.bind(this);
+    this.BuildAddress = this.BuildAddress.bind(this);
   }
   ContractInfo(request: QueryContractInfoRequest): Promise<QueryContractInfoResponse> {
     const data = QueryContractInfoRequest.encode(request).finish();
@@ -1652,5 +1807,10 @@ export class QueryClientImpl implements Query {
     const data = QueryContractsByCreatorRequest.encode(request).finish();
     const promise = this.rpc.request("cosmwasm.wasm.v1.Query", "ContractsByCreator", data);
     return promise.then((data) => QueryContractsByCreatorResponse.decode(new BinaryReader(data)));
+  }
+  BuildAddress(request: QueryBuildAddressRequest): Promise<QueryBuildAddressResponse> {
+    const data = QueryBuildAddressRequest.encode(request).finish();
+    const promise = this.rpc.request("cosmwasm.wasm.v1.Query", "BuildAddress", data);
+    return promise.then((data) => QueryBuildAddressResponse.decode(new BinaryReader(data)));
   }
 }

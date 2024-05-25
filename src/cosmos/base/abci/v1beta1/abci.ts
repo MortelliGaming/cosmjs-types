@@ -40,15 +40,6 @@ export interface TxResponse {
    * it's genesis time.
    */
   timestamp: string;
-  /**
-   * Events defines all the events emitted by processing a transaction. Note,
-   * these events include those emitted by processing all the messages and those
-   * emitted from the ante. Whereas Logs contains the events, with
-   * additional metadata, emitted only by processing the messages.
-   *
-   * Since: cosmos-sdk 0.42.11, 0.44.5, 0.45
-   */
-  events: Event[];
 }
 /** ABCIMessageLog defines a structure containing an indexed tx ABCI message log. */
 export interface ABCIMessageLog {
@@ -88,10 +79,7 @@ export interface Result {
   /**
    * Data is any data returned from message or handler execution. It MUST be
    * length prefixed in order to separate data from multiple message executions.
-   * Deprecated. This field is still populated, but prefer msg_response instead
-   * because it also contains the Msg response typeURL.
    */
-  /** @deprecated */
   data: Uint8Array;
   /** Log contains the log information from message or handler execution. */
   log: string;
@@ -100,12 +88,6 @@ export interface Result {
    * or handler execution.
    */
   events: Event[];
-  /**
-   * msg_responses contains the Msg handler responses type packed in Anys.
-   *
-   * Since: cosmos-sdk 0.46
-   */
-  msgResponses: Any[];
 }
 /**
  * SimulationResponse defines the response generated when a transaction is
@@ -119,7 +101,6 @@ export interface SimulationResponse {
  * MsgData defines the data returned in a Result object during message
  * execution.
  */
-/** @deprecated */
 export interface MsgData {
   msgType: string;
   data: Uint8Array;
@@ -129,15 +110,7 @@ export interface MsgData {
  * for each message.
  */
 export interface TxMsgData {
-  /** data field is deprecated and not populated. */
-  /** @deprecated */
   data: MsgData[];
-  /**
-   * msg_responses contains the Msg handler responses packed into Anys.
-   *
-   * Since: cosmos-sdk 0.46
-   */
-  msgResponses: Any[];
 }
 /** SearchTxsResult defines a structure for querying txs pageable */
 export interface SearchTxsResult {
@@ -168,7 +141,6 @@ function createBaseTxResponse(): TxResponse {
     gasUsed: BigInt(0),
     tx: undefined,
     timestamp: "",
-    events: [],
   };
 }
 export const TxResponse = {
@@ -209,9 +181,6 @@ export const TxResponse = {
     }
     if (message.timestamp !== "") {
       writer.uint32(98).string(message.timestamp);
-    }
-    for (const v of message.events) {
-      Event.encode(v!, writer.uint32(106).fork()).ldelim();
     }
     return writer;
   },
@@ -258,9 +227,6 @@ export const TxResponse = {
         case 12:
           message.timestamp = reader.string();
           break;
-        case 13:
-          message.events.push(Event.decode(reader, reader.uint32()));
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -282,7 +248,6 @@ export const TxResponse = {
     if (isSet(object.gasUsed)) obj.gasUsed = BigInt(object.gasUsed.toString());
     if (isSet(object.tx)) obj.tx = Any.fromJSON(object.tx);
     if (isSet(object.timestamp)) obj.timestamp = String(object.timestamp);
-    if (Array.isArray(object?.events)) obj.events = object.events.map((e: any) => Event.fromJSON(e));
     return obj;
   },
   toJSON(message: TxResponse): unknown {
@@ -303,11 +268,6 @@ export const TxResponse = {
     message.gasUsed !== undefined && (obj.gasUsed = (message.gasUsed || BigInt(0)).toString());
     message.tx !== undefined && (obj.tx = message.tx ? Any.toJSON(message.tx) : undefined);
     message.timestamp !== undefined && (obj.timestamp = message.timestamp);
-    if (message.events) {
-      obj.events = message.events.map((e) => (e ? Event.toJSON(e) : undefined));
-    } else {
-      obj.events = [];
-    }
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<TxResponse>, I>>(object: I): TxResponse {
@@ -332,7 +292,6 @@ export const TxResponse = {
       message.tx = Any.fromPartial(object.tx);
     }
     message.timestamp = object.timestamp ?? "";
-    message.events = object.events?.map((e) => Event.fromPartial(e)) || [];
     return message;
   },
 };
@@ -588,7 +547,6 @@ function createBaseResult(): Result {
     data: new Uint8Array(),
     log: "",
     events: [],
-    msgResponses: [],
   };
 }
 export const Result = {
@@ -602,9 +560,6 @@ export const Result = {
     }
     for (const v of message.events) {
       Event.encode(v!, writer.uint32(26).fork()).ldelim();
-    }
-    for (const v of message.msgResponses) {
-      Any.encode(v!, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -624,9 +579,6 @@ export const Result = {
         case 3:
           message.events.push(Event.decode(reader, reader.uint32()));
           break;
-        case 4:
-          message.msgResponses.push(Any.decode(reader, reader.uint32()));
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -639,8 +591,6 @@ export const Result = {
     if (isSet(object.data)) obj.data = bytesFromBase64(object.data);
     if (isSet(object.log)) obj.log = String(object.log);
     if (Array.isArray(object?.events)) obj.events = object.events.map((e: any) => Event.fromJSON(e));
-    if (Array.isArray(object?.msgResponses))
-      obj.msgResponses = object.msgResponses.map((e: any) => Any.fromJSON(e));
     return obj;
   },
   toJSON(message: Result): unknown {
@@ -653,11 +603,6 @@ export const Result = {
     } else {
       obj.events = [];
     }
-    if (message.msgResponses) {
-      obj.msgResponses = message.msgResponses.map((e) => (e ? Any.toJSON(e) : undefined));
-    } else {
-      obj.msgResponses = [];
-    }
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<Result>, I>>(object: I): Result {
@@ -665,7 +610,6 @@ export const Result = {
     message.data = object.data ?? new Uint8Array();
     message.log = object.log ?? "";
     message.events = object.events?.map((e) => Event.fromPartial(e)) || [];
-    message.msgResponses = object.msgResponses?.map((e) => Any.fromPartial(e)) || [];
     return message;
   },
 };
@@ -790,7 +734,6 @@ export const MsgData = {
 function createBaseTxMsgData(): TxMsgData {
   return {
     data: [],
-    msgResponses: [],
   };
 }
 export const TxMsgData = {
@@ -798,9 +741,6 @@ export const TxMsgData = {
   encode(message: TxMsgData, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
     for (const v of message.data) {
       MsgData.encode(v!, writer.uint32(10).fork()).ldelim();
-    }
-    for (const v of message.msgResponses) {
-      Any.encode(v!, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -814,9 +754,6 @@ export const TxMsgData = {
         case 1:
           message.data.push(MsgData.decode(reader, reader.uint32()));
           break;
-        case 2:
-          message.msgResponses.push(Any.decode(reader, reader.uint32()));
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -827,8 +764,6 @@ export const TxMsgData = {
   fromJSON(object: any): TxMsgData {
     const obj = createBaseTxMsgData();
     if (Array.isArray(object?.data)) obj.data = object.data.map((e: any) => MsgData.fromJSON(e));
-    if (Array.isArray(object?.msgResponses))
-      obj.msgResponses = object.msgResponses.map((e: any) => Any.fromJSON(e));
     return obj;
   },
   toJSON(message: TxMsgData): unknown {
@@ -838,17 +773,11 @@ export const TxMsgData = {
     } else {
       obj.data = [];
     }
-    if (message.msgResponses) {
-      obj.msgResponses = message.msgResponses.map((e) => (e ? Any.toJSON(e) : undefined));
-    } else {
-      obj.msgResponses = [];
-    }
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<TxMsgData>, I>>(object: I): TxMsgData {
     const message = createBaseTxMsgData();
     message.data = object.data?.map((e) => MsgData.fromPartial(e)) || [];
-    message.msgResponses = object.msgResponses?.map((e) => Any.fromPartial(e)) || [];
     return message;
   },
 };

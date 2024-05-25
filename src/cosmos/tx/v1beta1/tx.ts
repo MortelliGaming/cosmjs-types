@@ -68,40 +68,6 @@ export interface SignDoc {
   /** account_number is the account number of the account in state */
   accountNumber: bigint;
 }
-/**
- * SignDocDirectAux is the type used for generating sign bytes for
- * SIGN_MODE_DIRECT_AUX.
- *
- * Since: cosmos-sdk 0.46
- */
-export interface SignDocDirectAux {
-  /**
-   * body_bytes is protobuf serialization of a TxBody that matches the
-   * representation in TxRaw.
-   */
-  bodyBytes: Uint8Array;
-  /** public_key is the public key of the signing account. */
-  publicKey?: Any;
-  /**
-   * chain_id is the identifier of the chain this transaction targets.
-   * It prevents signed transactions from being used on another chain by an
-   * attacker.
-   */
-  chainId: string;
-  /** account_number is the account number of the account in state. */
-  accountNumber: bigint;
-  /** sequence is the sequence number of the signing account. */
-  sequence: bigint;
-  /**
-   * Tip is the optional tip used for transactions fees paid in another denom.
-   * It should be left empty if the signer is not the tipper for this
-   * transaction.
-   *
-   * This field is ignored if the chain didn't enable tips, i.e. didn't add the
-   * `TipDecorator` in its posthandler.
-   */
-  tip?: Tip;
-}
 /** TxBody is the body of a transaction that all signers sign over. */
 export interface TxBody {
   /**
@@ -114,11 +80,7 @@ export interface TxBody {
    * transaction.
    */
   messages: Any[];
-  /**
-   * memo is any arbitrary note/comment to be added to the transaction.
-   * WARNING: in clients, any publicly exposed text should not be called memo,
-   * but should be called `note` instead (see https://github.com/cosmos/cosmos-sdk/issues/9122).
-   */
+  /** memo is any arbitrary memo to be added to the transaction */
   memo: string;
   /**
    * timeout is the block height after which this transaction will not
@@ -157,15 +119,6 @@ export interface AuthInfo {
    * of the signers. This can be estimated via simulation.
    */
   fee?: Fee;
-  /**
-   * Tip is the optional tip used for transactions fees paid in another denom.
-   *
-   * This field is ignored if the chain didn't enable tips, i.e. didn't add the
-   * `TipDecorator` in its posthandler.
-   *
-   * Since: cosmos-sdk 0.46
-   */
-  tip?: Tip;
 }
 /**
  * SignerInfo describes the public key and signing mode of a single top-level
@@ -241,43 +194,6 @@ export interface Fee {
    * not support fee grants, this will fail
    */
   granter: string;
-}
-/**
- * Tip is the tip used for meta-transactions.
- *
- * Since: cosmos-sdk 0.46
- */
-export interface Tip {
-  /** amount is the amount of the tip */
-  amount: Coin[];
-  /** tipper is the address of the account paying for the tip */
-  tipper: string;
-}
-/**
- * AuxSignerData is the intermediary format that an auxiliary signer (e.g. a
- * tipper) builds and sends to the fee payer (who will build and broadcast the
- * actual tx). AuxSignerData is not a valid tx in itself, and will be rejected
- * by the node if sent directly as-is.
- *
- * Since: cosmos-sdk 0.46
- */
-export interface AuxSignerData {
-  /**
-   * address is the bech32-encoded address of the auxiliary signer. If using
-   * AuxSignerData across different chains, the bech32 prefix of the target
-   * chain (where the final transaction is broadcasted) should be used.
-   */
-  address: string;
-  /**
-   * sign_doc is the SIGN_MODE_DIRECT_AUX sign doc that the auxiliary signer
-   * signs. Note: we use the same sign doc even if we're signing with
-   * LEGACY_AMINO_JSON.
-   */
-  signDoc?: SignDocDirectAux;
-  /** mode is the signing mode of the single signer. */
-  mode: SignMode;
-  /** sig is the signature of the sign doc. */
-  sig: Uint8Array;
 }
 function createBaseTx(): Tx {
   return {
@@ -517,115 +433,6 @@ export const SignDoc = {
     return message;
   },
 };
-function createBaseSignDocDirectAux(): SignDocDirectAux {
-  return {
-    bodyBytes: new Uint8Array(),
-    publicKey: undefined,
-    chainId: "",
-    accountNumber: BigInt(0),
-    sequence: BigInt(0),
-    tip: undefined,
-  };
-}
-export const SignDocDirectAux = {
-  typeUrl: "/cosmos.tx.v1beta1.SignDocDirectAux",
-  encode(message: SignDocDirectAux, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.bodyBytes.length !== 0) {
-      writer.uint32(10).bytes(message.bodyBytes);
-    }
-    if (message.publicKey !== undefined) {
-      Any.encode(message.publicKey, writer.uint32(18).fork()).ldelim();
-    }
-    if (message.chainId !== "") {
-      writer.uint32(26).string(message.chainId);
-    }
-    if (message.accountNumber !== BigInt(0)) {
-      writer.uint32(32).uint64(message.accountNumber);
-    }
-    if (message.sequence !== BigInt(0)) {
-      writer.uint32(40).uint64(message.sequence);
-    }
-    if (message.tip !== undefined) {
-      Tip.encode(message.tip, writer.uint32(50).fork()).ldelim();
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): SignDocDirectAux {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseSignDocDirectAux();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.bodyBytes = reader.bytes();
-          break;
-        case 2:
-          message.publicKey = Any.decode(reader, reader.uint32());
-          break;
-        case 3:
-          message.chainId = reader.string();
-          break;
-        case 4:
-          message.accountNumber = reader.uint64();
-          break;
-        case 5:
-          message.sequence = reader.uint64();
-          break;
-        case 6:
-          message.tip = Tip.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): SignDocDirectAux {
-    const obj = createBaseSignDocDirectAux();
-    if (isSet(object.bodyBytes)) obj.bodyBytes = bytesFromBase64(object.bodyBytes);
-    if (isSet(object.publicKey)) obj.publicKey = Any.fromJSON(object.publicKey);
-    if (isSet(object.chainId)) obj.chainId = String(object.chainId);
-    if (isSet(object.accountNumber)) obj.accountNumber = BigInt(object.accountNumber.toString());
-    if (isSet(object.sequence)) obj.sequence = BigInt(object.sequence.toString());
-    if (isSet(object.tip)) obj.tip = Tip.fromJSON(object.tip);
-    return obj;
-  },
-  toJSON(message: SignDocDirectAux): unknown {
-    const obj: any = {};
-    message.bodyBytes !== undefined &&
-      (obj.bodyBytes = base64FromBytes(
-        message.bodyBytes !== undefined ? message.bodyBytes : new Uint8Array(),
-      ));
-    message.publicKey !== undefined &&
-      (obj.publicKey = message.publicKey ? Any.toJSON(message.publicKey) : undefined);
-    message.chainId !== undefined && (obj.chainId = message.chainId);
-    message.accountNumber !== undefined &&
-      (obj.accountNumber = (message.accountNumber || BigInt(0)).toString());
-    message.sequence !== undefined && (obj.sequence = (message.sequence || BigInt(0)).toString());
-    message.tip !== undefined && (obj.tip = message.tip ? Tip.toJSON(message.tip) : undefined);
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<SignDocDirectAux>, I>>(object: I): SignDocDirectAux {
-    const message = createBaseSignDocDirectAux();
-    message.bodyBytes = object.bodyBytes ?? new Uint8Array();
-    if (object.publicKey !== undefined && object.publicKey !== null) {
-      message.publicKey = Any.fromPartial(object.publicKey);
-    }
-    message.chainId = object.chainId ?? "";
-    if (object.accountNumber !== undefined && object.accountNumber !== null) {
-      message.accountNumber = BigInt(object.accountNumber.toString());
-    }
-    if (object.sequence !== undefined && object.sequence !== null) {
-      message.sequence = BigInt(object.sequence.toString());
-    }
-    if (object.tip !== undefined && object.tip !== null) {
-      message.tip = Tip.fromPartial(object.tip);
-    }
-    return message;
-  },
-};
 function createBaseTxBody(): TxBody {
   return {
     messages: [],
@@ -736,7 +543,6 @@ function createBaseAuthInfo(): AuthInfo {
   return {
     signerInfos: [],
     fee: undefined,
-    tip: undefined,
   };
 }
 export const AuthInfo = {
@@ -747,9 +553,6 @@ export const AuthInfo = {
     }
     if (message.fee !== undefined) {
       Fee.encode(message.fee, writer.uint32(18).fork()).ldelim();
-    }
-    if (message.tip !== undefined) {
-      Tip.encode(message.tip, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -766,9 +569,6 @@ export const AuthInfo = {
         case 2:
           message.fee = Fee.decode(reader, reader.uint32());
           break;
-        case 3:
-          message.tip = Tip.decode(reader, reader.uint32());
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -781,7 +581,6 @@ export const AuthInfo = {
     if (Array.isArray(object?.signerInfos))
       obj.signerInfos = object.signerInfos.map((e: any) => SignerInfo.fromJSON(e));
     if (isSet(object.fee)) obj.fee = Fee.fromJSON(object.fee);
-    if (isSet(object.tip)) obj.tip = Tip.fromJSON(object.tip);
     return obj;
   },
   toJSON(message: AuthInfo): unknown {
@@ -792,7 +591,6 @@ export const AuthInfo = {
       obj.signerInfos = [];
     }
     message.fee !== undefined && (obj.fee = message.fee ? Fee.toJSON(message.fee) : undefined);
-    message.tip !== undefined && (obj.tip = message.tip ? Tip.toJSON(message.tip) : undefined);
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<AuthInfo>, I>>(object: I): AuthInfo {
@@ -800,9 +598,6 @@ export const AuthInfo = {
     message.signerInfos = object.signerInfos?.map((e) => SignerInfo.fromPartial(e)) || [];
     if (object.fee !== undefined && object.fee !== null) {
       message.fee = Fee.fromPartial(object.fee);
-    }
-    if (object.tip !== undefined && object.tip !== null) {
-      message.tip = Tip.fromPartial(object.tip);
     }
     return message;
   },
@@ -1132,146 +927,6 @@ export const Fee = {
     }
     message.payer = object.payer ?? "";
     message.granter = object.granter ?? "";
-    return message;
-  },
-};
-function createBaseTip(): Tip {
-  return {
-    amount: [],
-    tipper: "",
-  };
-}
-export const Tip = {
-  typeUrl: "/cosmos.tx.v1beta1.Tip",
-  encode(message: Tip, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    for (const v of message.amount) {
-      Coin.encode(v!, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.tipper !== "") {
-      writer.uint32(18).string(message.tipper);
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): Tip {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseTip();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.amount.push(Coin.decode(reader, reader.uint32()));
-          break;
-        case 2:
-          message.tipper = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): Tip {
-    const obj = createBaseTip();
-    if (Array.isArray(object?.amount)) obj.amount = object.amount.map((e: any) => Coin.fromJSON(e));
-    if (isSet(object.tipper)) obj.tipper = String(object.tipper);
-    return obj;
-  },
-  toJSON(message: Tip): unknown {
-    const obj: any = {};
-    if (message.amount) {
-      obj.amount = message.amount.map((e) => (e ? Coin.toJSON(e) : undefined));
-    } else {
-      obj.amount = [];
-    }
-    message.tipper !== undefined && (obj.tipper = message.tipper);
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<Tip>, I>>(object: I): Tip {
-    const message = createBaseTip();
-    message.amount = object.amount?.map((e) => Coin.fromPartial(e)) || [];
-    message.tipper = object.tipper ?? "";
-    return message;
-  },
-};
-function createBaseAuxSignerData(): AuxSignerData {
-  return {
-    address: "",
-    signDoc: undefined,
-    mode: 0,
-    sig: new Uint8Array(),
-  };
-}
-export const AuxSignerData = {
-  typeUrl: "/cosmos.tx.v1beta1.AuxSignerData",
-  encode(message: AuxSignerData, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.address !== "") {
-      writer.uint32(10).string(message.address);
-    }
-    if (message.signDoc !== undefined) {
-      SignDocDirectAux.encode(message.signDoc, writer.uint32(18).fork()).ldelim();
-    }
-    if (message.mode !== 0) {
-      writer.uint32(24).int32(message.mode);
-    }
-    if (message.sig.length !== 0) {
-      writer.uint32(34).bytes(message.sig);
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): AuxSignerData {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseAuxSignerData();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.address = reader.string();
-          break;
-        case 2:
-          message.signDoc = SignDocDirectAux.decode(reader, reader.uint32());
-          break;
-        case 3:
-          message.mode = reader.int32() as any;
-          break;
-        case 4:
-          message.sig = reader.bytes();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): AuxSignerData {
-    const obj = createBaseAuxSignerData();
-    if (isSet(object.address)) obj.address = String(object.address);
-    if (isSet(object.signDoc)) obj.signDoc = SignDocDirectAux.fromJSON(object.signDoc);
-    if (isSet(object.mode)) obj.mode = signModeFromJSON(object.mode);
-    if (isSet(object.sig)) obj.sig = bytesFromBase64(object.sig);
-    return obj;
-  },
-  toJSON(message: AuxSignerData): unknown {
-    const obj: any = {};
-    message.address !== undefined && (obj.address = message.address);
-    message.signDoc !== undefined &&
-      (obj.signDoc = message.signDoc ? SignDocDirectAux.toJSON(message.signDoc) : undefined);
-    message.mode !== undefined && (obj.mode = signModeToJSON(message.mode));
-    message.sig !== undefined &&
-      (obj.sig = base64FromBytes(message.sig !== undefined ? message.sig : new Uint8Array()));
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<AuxSignerData>, I>>(object: I): AuxSignerData {
-    const message = createBaseAuxSignerData();
-    message.address = object.address ?? "";
-    if (object.signDoc !== undefined && object.signDoc !== null) {
-      message.signDoc = SignDocDirectAux.fromPartial(object.signDoc);
-    }
-    message.mode = object.mode ?? 0;
-    message.sig = object.sig ?? new Uint8Array();
     return message;
   },
 };

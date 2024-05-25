@@ -22,6 +22,11 @@ export interface SuperfluidAsset {
      * share
      */
     assetType: SuperfluidAssetType;
+    /**
+     * For non-osmo native assets, we need a pool_id osmo/asset to determine the
+     * twap of the asset
+     */
+    pricePoolId: bigint;
 }
 /**
  * SuperfluidIntermediaryAccount takes the role of intermediary between LP token
@@ -80,6 +85,16 @@ export interface ConcentratedPoolUserPositionRecord {
     delegationAmount: Coin;
     equivalentStakedAmount?: Coin;
 }
+/** The DenomRiskFactor stores the risk factor of a superfluid asset */
+export interface DenomRiskFactor {
+    /** superfluid asset denom, can be LP token or native token */
+    denom: string;
+    /**
+     * risk_factor is to be cut on OSMO equivalent value of the denom tokens
+     * for superfluid staking. It defaults to params.minimum_risk_factor
+     */
+    riskFactor: string;
+}
 export declare const SuperfluidAsset: {
     typeUrl: string;
     encode(message: SuperfluidAsset, writer?: BinaryWriter): BinaryWriter;
@@ -89,9 +104,11 @@ export declare const SuperfluidAsset: {
     fromPartial<I extends {
         denom?: string | undefined;
         assetType?: SuperfluidAssetType | undefined;
+        pricePoolId?: bigint | undefined;
     } & {
         denom?: string | undefined;
         assetType?: SuperfluidAssetType | undefined;
+        pricePoolId?: bigint | undefined;
     } & Record<Exclude<keyof I, keyof SuperfluidAsset>, never>>(object: I): SuperfluidAsset;
 };
 export declare const SuperfluidIntermediaryAccount: {
@@ -266,4 +283,18 @@ export declare const ConcentratedPoolUserPositionRecord: {
             amount?: string | undefined;
         } & Record<Exclude<keyof I["equivalentStakedAmount"], keyof Coin>, never>) | undefined;
     } & Record<Exclude<keyof I, keyof ConcentratedPoolUserPositionRecord>, never>>(object: I): ConcentratedPoolUserPositionRecord;
+};
+export declare const DenomRiskFactor: {
+    typeUrl: string;
+    encode(message: DenomRiskFactor, writer?: BinaryWriter): BinaryWriter;
+    decode(input: BinaryReader | Uint8Array, length?: number): DenomRiskFactor;
+    fromJSON(object: any): DenomRiskFactor;
+    toJSON(message: DenomRiskFactor): unknown;
+    fromPartial<I extends {
+        denom?: string | undefined;
+        riskFactor?: string | undefined;
+    } & {
+        denom?: string | undefined;
+        riskFactor?: string | undefined;
+    } & Record<Exclude<keyof I, keyof DenomRiskFactor>, never>>(object: I): DenomRiskFactor;
 };

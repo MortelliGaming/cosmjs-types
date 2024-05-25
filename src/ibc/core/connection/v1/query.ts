@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { PageRequest, PageResponse } from "../../../../cosmos/base/query/v1beta1/pagination";
 import { ConnectionEnd, IdentifiedConnection } from "./connection";
-import { Height, IdentifiedClientState, Params } from "../../client/v1/client";
+import { Height, IdentifiedClientState } from "../../client/v1/client";
 import { Any } from "../../../../google/protobuf/any";
 import { BinaryReader, BinaryWriter } from "../../../../binary";
 import { isSet, DeepPartial, Exact, bytesFromBase64, base64FromBytes, Rpc } from "../../../../helpers";
@@ -109,13 +109,6 @@ export interface QueryConnectionConsensusStateResponse {
   proof: Uint8Array;
   /** height at which the proof was retrieved */
   proofHeight: Height;
-}
-/** QueryConnectionParamsRequest is the request type for the Query/ConnectionParams RPC method. */
-export interface QueryConnectionParamsRequest {}
-/** QueryConnectionParamsResponse is the response type for the Query/ConnectionParams RPC method. */
-export interface QueryConnectionParamsResponse {
-  /** params defines the parameters of the module. */
-  params?: Params;
 }
 function createBaseQueryConnectionRequest(): QueryConnectionRequest {
   return {
@@ -788,93 +781,6 @@ export const QueryConnectionConsensusStateResponse = {
     return message;
   },
 };
-function createBaseQueryConnectionParamsRequest(): QueryConnectionParamsRequest {
-  return {};
-}
-export const QueryConnectionParamsRequest = {
-  typeUrl: "/ibc.core.connection.v1.QueryConnectionParamsRequest",
-  encode(_: QueryConnectionParamsRequest, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): QueryConnectionParamsRequest {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryConnectionParamsRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(_: any): QueryConnectionParamsRequest {
-    const obj = createBaseQueryConnectionParamsRequest();
-    return obj;
-  },
-  toJSON(_: QueryConnectionParamsRequest): unknown {
-    const obj: any = {};
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<QueryConnectionParamsRequest>, I>>(
-    _: I,
-  ): QueryConnectionParamsRequest {
-    const message = createBaseQueryConnectionParamsRequest();
-    return message;
-  },
-};
-function createBaseQueryConnectionParamsResponse(): QueryConnectionParamsResponse {
-  return {
-    params: undefined,
-  };
-}
-export const QueryConnectionParamsResponse = {
-  typeUrl: "/ibc.core.connection.v1.QueryConnectionParamsResponse",
-  encode(message: QueryConnectionParamsResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.params !== undefined) {
-      Params.encode(message.params, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): QueryConnectionParamsResponse {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryConnectionParamsResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.params = Params.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): QueryConnectionParamsResponse {
-    const obj = createBaseQueryConnectionParamsResponse();
-    if (isSet(object.params)) obj.params = Params.fromJSON(object.params);
-    return obj;
-  },
-  toJSON(message: QueryConnectionParamsResponse): unknown {
-    const obj: any = {};
-    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<QueryConnectionParamsResponse>, I>>(
-    object: I,
-  ): QueryConnectionParamsResponse {
-    const message = createBaseQueryConnectionParamsResponse();
-    if (object.params !== undefined && object.params !== null) {
-      message.params = Params.fromPartial(object.params);
-    }
-    return message;
-  },
-};
 /** Query provides defines the gRPC querier service */
 export interface Query {
   /** Connection queries an IBC connection end. */
@@ -900,8 +806,6 @@ export interface Query {
   ConnectionConsensusState(
     request: QueryConnectionConsensusStateRequest,
   ): Promise<QueryConnectionConsensusStateResponse>;
-  /** ConnectionParams queries all parameters of the ibc connection submodule. */
-  ConnectionParams(request?: QueryConnectionParamsRequest): Promise<QueryConnectionParamsResponse>;
 }
 export class QueryClientImpl implements Query {
   private readonly rpc: Rpc;
@@ -912,7 +816,6 @@ export class QueryClientImpl implements Query {
     this.ClientConnections = this.ClientConnections.bind(this);
     this.ConnectionClientState = this.ConnectionClientState.bind(this);
     this.ConnectionConsensusState = this.ConnectionConsensusState.bind(this);
-    this.ConnectionParams = this.ConnectionParams.bind(this);
   }
   Connection(request: QueryConnectionRequest): Promise<QueryConnectionResponse> {
     const data = QueryConnectionRequest.encode(request).finish();
@@ -946,10 +849,5 @@ export class QueryClientImpl implements Query {
     const data = QueryConnectionConsensusStateRequest.encode(request).finish();
     const promise = this.rpc.request("ibc.core.connection.v1.Query", "ConnectionConsensusState", data);
     return promise.then((data) => QueryConnectionConsensusStateResponse.decode(new BinaryReader(data)));
-  }
-  ConnectionParams(request: QueryConnectionParamsRequest = {}): Promise<QueryConnectionParamsResponse> {
-    const data = QueryConnectionParamsRequest.encode(request).finish();
-    const promise = this.rpc.request("ibc.core.connection.v1.Query", "ConnectionParams", data);
-    return promise.then((data) => QueryConnectionParamsResponse.decode(new BinaryReader(data)));
   }
 }

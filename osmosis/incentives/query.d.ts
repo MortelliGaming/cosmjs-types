@@ -13,11 +13,11 @@ export interface ModuleToDistributeCoinsResponse {
     coins: Coin[];
 }
 export interface GaugeByIDRequest {
-    /** Gague ID being queried */
+    /** Gauge ID being queried */
     id: bigint;
 }
 export interface GaugeByIDResponse {
-    /** Gauge that corresponds to provided gague ID */
+    /** Gauge that corresponds to provided gauge ID */
     gauge?: Gauge;
 }
 export interface GaugesRequest {
@@ -35,19 +35,19 @@ export interface ActiveGaugesRequest {
     pagination?: PageRequest;
 }
 export interface ActiveGaugesResponse {
-    /** Active gagues only */
+    /** Active gauges only */
     data: Gauge[];
     /** Pagination defines pagination for the response */
     pagination?: PageResponse;
 }
 export interface ActiveGaugesPerDenomRequest {
-    /** Desired denom when querying active gagues */
+    /** Desired denom when querying active gauges */
     denom: string;
     /** Pagination defines pagination for the request */
     pagination?: PageRequest;
 }
 export interface ActiveGaugesPerDenomResponse {
-    /** Active gagues that match denom in query */
+    /** Active gauges that match denom in query */
     data: Gauge[];
     /** Pagination defines pagination for the response */
     pagination?: PageResponse;
@@ -63,13 +63,13 @@ export interface UpcomingGaugesResponse {
     pagination?: PageResponse;
 }
 export interface UpcomingGaugesPerDenomRequest {
-    /** Filter for upcoming gagues that match specific denom */
+    /** Filter for upcoming gauges that match specific denom */
     denom: string;
     /** Pagination defines pagination for the request */
     pagination?: PageRequest;
 }
 export interface UpcomingGaugesPerDenomResponse {
-    /** Upcoming gagues that match denom in query */
+    /** Upcoming gauges that match denom in query */
     upcomingGauges: Gauge[];
     /** Pagination defines pagination for the response */
     pagination?: PageResponse;
@@ -325,7 +325,6 @@ export declare const GaugesRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } | undefined;
     } & {
         pagination?: ({
@@ -333,13 +332,11 @@ export declare const GaugesRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & {
             key?: Uint8Array | undefined;
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & Record<Exclude<keyof I["pagination"], keyof PageRequest>, never>) | undefined;
     } & Record<Exclude<keyof I, "pagination">, never>>(object: I): GaugesRequest;
 };
@@ -561,7 +558,6 @@ export declare const ActiveGaugesRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } | undefined;
     } & {
         pagination?: ({
@@ -569,13 +565,11 @@ export declare const ActiveGaugesRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & {
             key?: Uint8Array | undefined;
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & Record<Exclude<keyof I["pagination"], keyof PageRequest>, never>) | undefined;
     } & Record<Exclude<keyof I, "pagination">, never>>(object: I): ActiveGaugesRequest;
 };
@@ -798,7 +792,6 @@ export declare const ActiveGaugesPerDenomRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } | undefined;
     } & {
         denom?: string | undefined;
@@ -807,13 +800,11 @@ export declare const ActiveGaugesPerDenomRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & {
             key?: Uint8Array | undefined;
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & Record<Exclude<keyof I["pagination"], keyof PageRequest>, never>) | undefined;
     } & Record<Exclude<keyof I, keyof ActiveGaugesPerDenomRequest>, never>>(object: I): ActiveGaugesPerDenomRequest;
 };
@@ -1035,7 +1026,6 @@ export declare const UpcomingGaugesRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } | undefined;
     } & {
         pagination?: ({
@@ -1043,13 +1033,11 @@ export declare const UpcomingGaugesRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & {
             key?: Uint8Array | undefined;
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & Record<Exclude<keyof I["pagination"], keyof PageRequest>, never>) | undefined;
     } & Record<Exclude<keyof I, "pagination">, never>>(object: I): UpcomingGaugesRequest;
 };
@@ -1272,7 +1260,6 @@ export declare const UpcomingGaugesPerDenomRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } | undefined;
     } & {
         denom?: string | undefined;
@@ -1281,13 +1268,11 @@ export declare const UpcomingGaugesPerDenomRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & {
             key?: Uint8Array | undefined;
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & Record<Exclude<keyof I["pagination"], keyof PageRequest>, never>) | undefined;
     } & Record<Exclude<keyof I, keyof UpcomingGaugesPerDenomRequest>, never>>(object: I): UpcomingGaugesPerDenomRequest;
 };

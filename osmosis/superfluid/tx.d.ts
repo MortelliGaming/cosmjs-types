@@ -142,6 +142,21 @@ export interface MsgUnbondConvertAndStake {
 export interface MsgUnbondConvertAndStakeResponse {
     totalAmtStaked: string;
 }
+/** ===================== MsgSetDenomRiskFactor */
+export interface MsgSetDenomRiskFactor {
+    sender: string;
+    denom: string;
+    riskFactor: string;
+}
+export interface MsgSetDenomRiskFactorResponse {
+}
+/** ===================== MsgUnsetDenomRiskFactor */
+export interface MsgUnsetDenomRiskFactor {
+    sender: string;
+    denom: string;
+}
+export interface MsgUnsetDenomRiskFactorResponse {
+}
 export declare const MsgSuperfluidDelegate: {
     typeUrl: string;
     encode(message: MsgSuperfluidDelegate, writer?: BinaryWriter): BinaryWriter;
@@ -529,6 +544,52 @@ export declare const MsgUnbondConvertAndStakeResponse: {
         totalAmtStaked?: string | undefined;
     } & Record<Exclude<keyof I, "totalAmtStaked">, never>>(object: I): MsgUnbondConvertAndStakeResponse;
 };
+export declare const MsgSetDenomRiskFactor: {
+    typeUrl: string;
+    encode(message: MsgSetDenomRiskFactor, writer?: BinaryWriter): BinaryWriter;
+    decode(input: BinaryReader | Uint8Array, length?: number): MsgSetDenomRiskFactor;
+    fromJSON(object: any): MsgSetDenomRiskFactor;
+    toJSON(message: MsgSetDenomRiskFactor): unknown;
+    fromPartial<I extends {
+        sender?: string | undefined;
+        denom?: string | undefined;
+        riskFactor?: string | undefined;
+    } & {
+        sender?: string | undefined;
+        denom?: string | undefined;
+        riskFactor?: string | undefined;
+    } & Record<Exclude<keyof I, keyof MsgSetDenomRiskFactor>, never>>(object: I): MsgSetDenomRiskFactor;
+};
+export declare const MsgSetDenomRiskFactorResponse: {
+    typeUrl: string;
+    encode(_: MsgSetDenomRiskFactorResponse, writer?: BinaryWriter): BinaryWriter;
+    decode(input: BinaryReader | Uint8Array, length?: number): MsgSetDenomRiskFactorResponse;
+    fromJSON(_: any): MsgSetDenomRiskFactorResponse;
+    toJSON(_: MsgSetDenomRiskFactorResponse): unknown;
+    fromPartial<I extends {} & {} & Record<Exclude<keyof I, never>, never>>(_: I): MsgSetDenomRiskFactorResponse;
+};
+export declare const MsgUnsetDenomRiskFactor: {
+    typeUrl: string;
+    encode(message: MsgUnsetDenomRiskFactor, writer?: BinaryWriter): BinaryWriter;
+    decode(input: BinaryReader | Uint8Array, length?: number): MsgUnsetDenomRiskFactor;
+    fromJSON(object: any): MsgUnsetDenomRiskFactor;
+    toJSON(message: MsgUnsetDenomRiskFactor): unknown;
+    fromPartial<I extends {
+        sender?: string | undefined;
+        denom?: string | undefined;
+    } & {
+        sender?: string | undefined;
+        denom?: string | undefined;
+    } & Record<Exclude<keyof I, keyof MsgUnsetDenomRiskFactor>, never>>(object: I): MsgUnsetDenomRiskFactor;
+};
+export declare const MsgUnsetDenomRiskFactorResponse: {
+    typeUrl: string;
+    encode(_: MsgUnsetDenomRiskFactorResponse, writer?: BinaryWriter): BinaryWriter;
+    decode(input: BinaryReader | Uint8Array, length?: number): MsgUnsetDenomRiskFactorResponse;
+    fromJSON(_: any): MsgUnsetDenomRiskFactorResponse;
+    toJSON(_: MsgUnsetDenomRiskFactorResponse): unknown;
+    fromPartial<I extends {} & {} & Record<Exclude<keyof I, never>, never>>(_: I): MsgUnsetDenomRiskFactorResponse;
+};
 /** Msg defines the Msg service. */
 export interface Msg {
     /** Execute superfluid delegation for a lockup */
@@ -553,6 +614,8 @@ export interface Msg {
      * converts them to osmo then stakes the osmo to the designated validator.
      */
     UnbondConvertAndStake(request: MsgUnbondConvertAndStake): Promise<MsgUnbondConvertAndStakeResponse>;
+    SetDenomRiskFactor(request: MsgSetDenomRiskFactor): Promise<MsgSetDenomRiskFactorResponse>;
+    UnsetDenomRiskFactor(request: MsgUnsetDenomRiskFactor): Promise<MsgUnsetDenomRiskFactorResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
@@ -567,4 +630,6 @@ export declare class MsgClientImpl implements Msg {
     UnlockAndMigrateSharesToFullRangeConcentratedPosition(request: MsgUnlockAndMigrateSharesToFullRangeConcentratedPosition): Promise<MsgUnlockAndMigrateSharesToFullRangeConcentratedPositionResponse>;
     AddToConcentratedLiquiditySuperfluidPosition(request: MsgAddToConcentratedLiquiditySuperfluidPosition): Promise<MsgAddToConcentratedLiquiditySuperfluidPositionResponse>;
     UnbondConvertAndStake(request: MsgUnbondConvertAndStake): Promise<MsgUnbondConvertAndStakeResponse>;
+    SetDenomRiskFactor(request: MsgSetDenomRiskFactor): Promise<MsgSetDenomRiskFactorResponse>;
+    UnsetDenomRiskFactor(request: MsgUnsetDenomRiskFactor): Promise<MsgUnsetDenomRiskFactorResponse>;
 }

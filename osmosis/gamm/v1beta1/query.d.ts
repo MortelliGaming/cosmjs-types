@@ -217,7 +217,6 @@ export declare const QueryPoolsRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } | undefined;
     } & {
         pagination?: ({
@@ -225,13 +224,11 @@ export declare const QueryPoolsRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & {
             key?: Uint8Array | undefined;
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & Record<Exclude<keyof I["pagination"], keyof PageRequest>, never>) | undefined;
     } & Record<Exclude<keyof I, "pagination">, never>>(object: I): QueryPoolsRequest;
 };
@@ -609,7 +606,6 @@ export declare const QueryPoolsWithFilterRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } | undefined;
     } & {
         minLiquidity?: string | undefined;
@@ -619,13 +615,11 @@ export declare const QueryPoolsWithFilterRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & {
             key?: Uint8Array | undefined;
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & Record<Exclude<keyof I["pagination"], keyof PageRequest>, never>) | undefined;
     } & Record<Exclude<keyof I, keyof QueryPoolsWithFilterRequest>, never>>(object: I): QueryPoolsWithFilterRequest;
 };

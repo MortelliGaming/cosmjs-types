@@ -75,9 +75,8 @@ export interface ConnectionEnd {
   /** counterparty chain associated with this connection. */
   counterparty: Counterparty;
   /**
-   * delay period that must pass before a consensus state can be used for
-   * packet-verification NOTE: delay period logic is only implemented by some
-   * clients.
+   * delay period that must pass before a consensus state can be used for packet-verification
+   * NOTE: delay period logic is only implemented by some clients.
    */
   delayPeriod: bigint;
 }
@@ -138,15 +137,6 @@ export interface Version {
   identifier: string;
   /** list of features compatible with the specified identifier */
   features: string[];
-}
-/** Params defines the set of Connection parameters. */
-export interface Params {
-  /**
-   * maximum expected time per block (in nanoseconds), used to enforce block delay. This parameter should reflect the
-   * largest amount of time that the chain might reasonably take to produce the next block under normal operating
-   * conditions. A safe choice is 3-5x the expected time per block.
-   */
-  maxExpectedTimePerBlock: bigint;
 }
 function createBaseConnectionEnd(): ConnectionEnd {
   return {
@@ -584,56 +574,6 @@ export const Version = {
     const message = createBaseVersion();
     message.identifier = object.identifier ?? "";
     message.features = object.features?.map((e) => e) || [];
-    return message;
-  },
-};
-function createBaseParams(): Params {
-  return {
-    maxExpectedTimePerBlock: BigInt(0),
-  };
-}
-export const Params = {
-  typeUrl: "/ibc.core.connection.v1.Params",
-  encode(message: Params, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.maxExpectedTimePerBlock !== BigInt(0)) {
-      writer.uint32(8).uint64(message.maxExpectedTimePerBlock);
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): Params {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseParams();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.maxExpectedTimePerBlock = reader.uint64();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): Params {
-    const obj = createBaseParams();
-    if (isSet(object.maxExpectedTimePerBlock))
-      obj.maxExpectedTimePerBlock = BigInt(object.maxExpectedTimePerBlock.toString());
-    return obj;
-  },
-  toJSON(message: Params): unknown {
-    const obj: any = {};
-    message.maxExpectedTimePerBlock !== undefined &&
-      (obj.maxExpectedTimePerBlock = (message.maxExpectedTimePerBlock || BigInt(0)).toString());
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<Params>, I>>(object: I): Params {
-    const message = createBaseParams();
-    if (object.maxExpectedTimePerBlock !== undefined && object.maxExpectedTimePerBlock !== null) {
-      message.maxExpectedTimePerBlock = BigInt(object.maxExpectedTimePerBlock.toString());
-    }
     return message;
   },
 };

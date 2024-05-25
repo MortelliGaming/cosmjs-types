@@ -35,6 +35,7 @@ export declare const GenesisState: {
         superfluidAssets?: {
             denom?: string | undefined;
             assetType?: import("./superfluid").SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         }[] | undefined;
         osmoEquivalentMultipliers?: {
             epochNumber?: bigint | undefined;
@@ -59,15 +60,19 @@ export declare const GenesisState: {
         superfluidAssets?: ({
             denom?: string | undefined;
             assetType?: import("./superfluid").SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         }[] & ({
             denom?: string | undefined;
             assetType?: import("./superfluid").SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         } & {
             denom?: string | undefined;
             assetType?: import("./superfluid").SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         } & Record<Exclude<keyof I["superfluidAssets"][number], keyof SuperfluidAsset>, never>)[] & Record<Exclude<keyof I["superfluidAssets"], keyof {
             denom?: string | undefined;
             assetType?: import("./superfluid").SuperfluidAssetType | undefined;
+            pricePoolId?: bigint | undefined;
         }[]>, never>) | undefined;
         osmoEquivalentMultipliers?: ({
             epochNumber?: bigint | undefined;

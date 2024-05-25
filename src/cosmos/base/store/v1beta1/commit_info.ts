@@ -1,15 +1,6 @@
 /* eslint-disable */
-import { Timestamp } from "../../../../google/protobuf/timestamp";
 import { BinaryReader, BinaryWriter } from "../../../../binary";
-import {
-  isSet,
-  fromJsonTimestamp,
-  fromTimestamp,
-  DeepPartial,
-  Exact,
-  bytesFromBase64,
-  base64FromBytes,
-} from "../../../../helpers";
+import { isSet, DeepPartial, Exact, bytesFromBase64, base64FromBytes } from "../../../../helpers";
 export const protobufPackage = "cosmos.base.store.v1beta1";
 /**
  * CommitInfo defines commit information used by the multi-store when committing
@@ -18,7 +9,6 @@ export const protobufPackage = "cosmos.base.store.v1beta1";
 export interface CommitInfo {
   version: bigint;
   storeInfos: StoreInfo[];
-  timestamp: Timestamp;
 }
 /**
  * StoreInfo defines store-specific commit information. It contains a reference
@@ -29,7 +19,7 @@ export interface StoreInfo {
   commitId: CommitID;
 }
 /**
- * CommitID defines the commitment information when a specific store is
+ * CommitID defines the committment information when a specific store is
  * committed.
  */
 export interface CommitID {
@@ -40,7 +30,6 @@ function createBaseCommitInfo(): CommitInfo {
   return {
     version: BigInt(0),
     storeInfos: [],
-    timestamp: Timestamp.fromPartial({}),
   };
 }
 export const CommitInfo = {
@@ -51,9 +40,6 @@ export const CommitInfo = {
     }
     for (const v of message.storeInfos) {
       StoreInfo.encode(v!, writer.uint32(18).fork()).ldelim();
-    }
-    if (message.timestamp !== undefined) {
-      Timestamp.encode(message.timestamp, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -70,9 +56,6 @@ export const CommitInfo = {
         case 2:
           message.storeInfos.push(StoreInfo.decode(reader, reader.uint32()));
           break;
-        case 3:
-          message.timestamp = Timestamp.decode(reader, reader.uint32());
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -85,7 +68,6 @@ export const CommitInfo = {
     if (isSet(object.version)) obj.version = BigInt(object.version.toString());
     if (Array.isArray(object?.storeInfos))
       obj.storeInfos = object.storeInfos.map((e: any) => StoreInfo.fromJSON(e));
-    if (isSet(object.timestamp)) obj.timestamp = fromJsonTimestamp(object.timestamp);
     return obj;
   },
   toJSON(message: CommitInfo): unknown {
@@ -96,7 +78,6 @@ export const CommitInfo = {
     } else {
       obj.storeInfos = [];
     }
-    message.timestamp !== undefined && (obj.timestamp = fromTimestamp(message.timestamp).toISOString());
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<CommitInfo>, I>>(object: I): CommitInfo {
@@ -105,9 +86,6 @@ export const CommitInfo = {
       message.version = BigInt(object.version.toString());
     }
     message.storeInfos = object.storeInfos?.map((e) => StoreInfo.fromPartial(e)) || [];
-    if (object.timestamp !== undefined && object.timestamp !== null) {
-      message.timestamp = Timestamp.fromPartial(object.timestamp);
-    }
     return message;
   },
 };

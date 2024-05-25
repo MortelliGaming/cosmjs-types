@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { Coin } from "../../../../cosmos/base/v1beta1/coin";
-import { PacketId } from "../../../core/channel/v1/channel";
 import { BinaryReader, BinaryWriter } from "../../../../binary";
 import { DeepPartial, Exact, isSet } from "../../../../helpers";
 export const protobufPackage = "ibc.applications.fee.v1";
@@ -29,8 +28,6 @@ export interface PacketFees {
 }
 /** IdentifiedPacketFees contains a list of type PacketFee and associated PacketId */
 export interface IdentifiedPacketFees {
-  /** unique packet identifier comprised of the channel ID, port ID and sequence */
-  packetId: PacketId;
   /** list of packet fees */
   packetFees: PacketFee[];
 }
@@ -238,16 +235,12 @@ export const PacketFees = {
 };
 function createBaseIdentifiedPacketFees(): IdentifiedPacketFees {
   return {
-    packetId: PacketId.fromPartial({}),
     packetFees: [],
   };
 }
 export const IdentifiedPacketFees = {
   typeUrl: "/ibc.applications.fee.v1.IdentifiedPacketFees",
   encode(message: IdentifiedPacketFees, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.packetId !== undefined) {
-      PacketId.encode(message.packetId, writer.uint32(10).fork()).ldelim();
-    }
     for (const v of message.packetFees) {
       PacketFee.encode(v!, writer.uint32(18).fork()).ldelim();
     }
@@ -260,9 +253,6 @@ export const IdentifiedPacketFees = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.packetId = PacketId.decode(reader, reader.uint32());
-          break;
         case 2:
           message.packetFees.push(PacketFee.decode(reader, reader.uint32()));
           break;
@@ -275,15 +265,12 @@ export const IdentifiedPacketFees = {
   },
   fromJSON(object: any): IdentifiedPacketFees {
     const obj = createBaseIdentifiedPacketFees();
-    if (isSet(object.packetId)) obj.packetId = PacketId.fromJSON(object.packetId);
     if (Array.isArray(object?.packetFees))
       obj.packetFees = object.packetFees.map((e: any) => PacketFee.fromJSON(e));
     return obj;
   },
   toJSON(message: IdentifiedPacketFees): unknown {
     const obj: any = {};
-    message.packetId !== undefined &&
-      (obj.packetId = message.packetId ? PacketId.toJSON(message.packetId) : undefined);
     if (message.packetFees) {
       obj.packetFees = message.packetFees.map((e) => (e ? PacketFee.toJSON(e) : undefined));
     } else {
@@ -293,9 +280,6 @@ export const IdentifiedPacketFees = {
   },
   fromPartial<I extends Exact<DeepPartial<IdentifiedPacketFees>, I>>(object: I): IdentifiedPacketFees {
     const message = createBaseIdentifiedPacketFees();
-    if (object.packetId !== undefined && object.packetId !== null) {
-      message.packetId = PacketId.fromPartial(object.packetId);
-    }
     message.packetFees = object.packetFees?.map((e) => PacketFee.fromPartial(e)) || [];
     return message;
   },

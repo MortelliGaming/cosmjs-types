@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Any } from "../../../google/protobuf/any";
 import { Coin } from "../../base/v1beta1/coin";
-import { VoteOption, WeightedVoteOption, voteOptionFromJSON, voteOptionToJSON } from "./gov";
+import { VoteOption, voteOptionFromJSON, voteOptionToJSON } from "./gov";
 import { BinaryReader, BinaryWriter } from "../../../binary";
 import { isSet, DeepPartial, Exact, Rpc } from "../../../helpers";
 export const protobufPackage = "cosmos.gov.v1beta1";
@@ -10,55 +10,26 @@ export const protobufPackage = "cosmos.gov.v1beta1";
  * proposal Content.
  */
 export interface MsgSubmitProposal {
-  /** content is the proposal's content. */
   content?: Any;
-  /** initial_deposit is the deposit value that must be paid at proposal submission. */
   initialDeposit: Coin[];
-  /** proposer is the account address of the proposer. */
   proposer: string;
 }
 /** MsgSubmitProposalResponse defines the Msg/SubmitProposal response type. */
 export interface MsgSubmitProposalResponse {
-  /** proposal_id defines the unique id of the proposal. */
   proposalId: bigint;
 }
 /** MsgVote defines a message to cast a vote. */
 export interface MsgVote {
-  /** proposal_id defines the unique id of the proposal. */
   proposalId: bigint;
-  /** voter is the voter address for the proposal. */
   voter: string;
-  /** option defines the vote option. */
   option: VoteOption;
 }
 /** MsgVoteResponse defines the Msg/Vote response type. */
 export interface MsgVoteResponse {}
-/**
- * MsgVoteWeighted defines a message to cast a vote.
- *
- * Since: cosmos-sdk 0.43
- */
-export interface MsgVoteWeighted {
-  /** proposal_id defines the unique id of the proposal. */
-  proposalId: bigint;
-  /** voter is the voter address for the proposal. */
-  voter: string;
-  /** options defines the weighted vote options. */
-  options: WeightedVoteOption[];
-}
-/**
- * MsgVoteWeightedResponse defines the Msg/VoteWeighted response type.
- *
- * Since: cosmos-sdk 0.43
- */
-export interface MsgVoteWeightedResponse {}
 /** MsgDeposit defines a message to submit a deposit to an existing proposal. */
 export interface MsgDeposit {
-  /** proposal_id defines the unique id of the proposal. */
   proposalId: bigint;
-  /** depositor defines the deposit addresses from the proposals. */
   depositor: string;
-  /** amount to be deposited by depositor. */
   amount: Coin[];
 }
 /** MsgDepositResponse defines the Msg/Deposit response type. */
@@ -290,114 +261,6 @@ export const MsgVoteResponse = {
     return message;
   },
 };
-function createBaseMsgVoteWeighted(): MsgVoteWeighted {
-  return {
-    proposalId: BigInt(0),
-    voter: "",
-    options: [],
-  };
-}
-export const MsgVoteWeighted = {
-  typeUrl: "/cosmos.gov.v1beta1.MsgVoteWeighted",
-  encode(message: MsgVoteWeighted, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.proposalId !== BigInt(0)) {
-      writer.uint32(8).uint64(message.proposalId);
-    }
-    if (message.voter !== "") {
-      writer.uint32(18).string(message.voter);
-    }
-    for (const v of message.options) {
-      WeightedVoteOption.encode(v!, writer.uint32(26).fork()).ldelim();
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgVoteWeighted {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgVoteWeighted();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.proposalId = reader.uint64();
-          break;
-        case 2:
-          message.voter = reader.string();
-          break;
-        case 3:
-          message.options.push(WeightedVoteOption.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): MsgVoteWeighted {
-    const obj = createBaseMsgVoteWeighted();
-    if (isSet(object.proposalId)) obj.proposalId = BigInt(object.proposalId.toString());
-    if (isSet(object.voter)) obj.voter = String(object.voter);
-    if (Array.isArray(object?.options))
-      obj.options = object.options.map((e: any) => WeightedVoteOption.fromJSON(e));
-    return obj;
-  },
-  toJSON(message: MsgVoteWeighted): unknown {
-    const obj: any = {};
-    message.proposalId !== undefined && (obj.proposalId = (message.proposalId || BigInt(0)).toString());
-    message.voter !== undefined && (obj.voter = message.voter);
-    if (message.options) {
-      obj.options = message.options.map((e) => (e ? WeightedVoteOption.toJSON(e) : undefined));
-    } else {
-      obj.options = [];
-    }
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<MsgVoteWeighted>, I>>(object: I): MsgVoteWeighted {
-    const message = createBaseMsgVoteWeighted();
-    if (object.proposalId !== undefined && object.proposalId !== null) {
-      message.proposalId = BigInt(object.proposalId.toString());
-    }
-    message.voter = object.voter ?? "";
-    message.options = object.options?.map((e) => WeightedVoteOption.fromPartial(e)) || [];
-    return message;
-  },
-};
-function createBaseMsgVoteWeightedResponse(): MsgVoteWeightedResponse {
-  return {};
-}
-export const MsgVoteWeightedResponse = {
-  typeUrl: "/cosmos.gov.v1beta1.MsgVoteWeightedResponse",
-  encode(_: MsgVoteWeightedResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgVoteWeightedResponse {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgVoteWeightedResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(_: any): MsgVoteWeightedResponse {
-    const obj = createBaseMsgVoteWeightedResponse();
-    return obj;
-  },
-  toJSON(_: MsgVoteWeightedResponse): unknown {
-    const obj: any = {};
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<MsgVoteWeightedResponse>, I>>(_: I): MsgVoteWeightedResponse {
-    const message = createBaseMsgVoteWeightedResponse();
-    return message;
-  },
-};
 function createBaseMsgDeposit(): MsgDeposit {
   return {
     proposalId: BigInt(0),
@@ -511,12 +374,6 @@ export interface Msg {
   SubmitProposal(request: MsgSubmitProposal): Promise<MsgSubmitProposalResponse>;
   /** Vote defines a method to add a vote on a specific proposal. */
   Vote(request: MsgVote): Promise<MsgVoteResponse>;
-  /**
-   * VoteWeighted defines a method to add a weighted vote on a specific proposal.
-   *
-   * Since: cosmos-sdk 0.43
-   */
-  VoteWeighted(request: MsgVoteWeighted): Promise<MsgVoteWeightedResponse>;
   /** Deposit defines a method to add deposit on a specific proposal. */
   Deposit(request: MsgDeposit): Promise<MsgDepositResponse>;
 }
@@ -526,7 +383,6 @@ export class MsgClientImpl implements Msg {
     this.rpc = rpc;
     this.SubmitProposal = this.SubmitProposal.bind(this);
     this.Vote = this.Vote.bind(this);
-    this.VoteWeighted = this.VoteWeighted.bind(this);
     this.Deposit = this.Deposit.bind(this);
   }
   SubmitProposal(request: MsgSubmitProposal): Promise<MsgSubmitProposalResponse> {
@@ -538,11 +394,6 @@ export class MsgClientImpl implements Msg {
     const data = MsgVote.encode(request).finish();
     const promise = this.rpc.request("cosmos.gov.v1beta1.Msg", "Vote", data);
     return promise.then((data) => MsgVoteResponse.decode(new BinaryReader(data)));
-  }
-  VoteWeighted(request: MsgVoteWeighted): Promise<MsgVoteWeightedResponse> {
-    const data = MsgVoteWeighted.encode(request).finish();
-    const promise = this.rpc.request("cosmos.gov.v1beta1.Msg", "VoteWeighted", data);
-    return promise.then((data) => MsgVoteWeightedResponse.decode(new BinaryReader(data)));
   }
   Deposit(request: MsgDeposit): Promise<MsgDepositResponse> {
     const data = MsgDeposit.encode(request).finish();

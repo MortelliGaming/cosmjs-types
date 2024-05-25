@@ -370,7 +370,6 @@ export declare const QueryTxLogsRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } | undefined;
     } & {
         hash?: string | undefined;
@@ -379,13 +378,11 @@ export declare const QueryTxLogsRequest: {
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & {
             key?: Uint8Array | undefined;
             offset?: bigint | undefined;
             limit?: bigint | undefined;
             countTotal?: boolean | undefined;
-            reverse?: boolean | undefined;
         } & Record<Exclude<keyof I["pagination"], keyof PageRequest>, never>) | undefined;
     } & Record<Exclude<keyof I, keyof QueryTxLogsRequest>, never>>(object: I): QueryTxLogsRequest;
 };

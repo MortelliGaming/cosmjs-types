@@ -16,10 +16,7 @@ export interface MsgConnectionOpenInit {
   delayPeriod: bigint;
   signer: string;
 }
-/**
- * MsgConnectionOpenInitResponse defines the Msg/ConnectionOpenInit response
- * type.
- */
+/** MsgConnectionOpenInitResponse defines the Msg/ConnectionOpenInit response type. */
 export interface MsgConnectionOpenInitResponse {}
 /**
  * MsgConnectionOpenTry defines a msg sent by a Relayer to try to open a
@@ -27,8 +24,10 @@ export interface MsgConnectionOpenInitResponse {}
  */
 export interface MsgConnectionOpenTry {
   clientId: string;
-  /** Deprecated: this field is unused. Crossing hellos are no longer supported in core IBC. */
-  /** @deprecated */
+  /**
+   * in the case of crossing hello's, when both chains call OpenInit, we need the connection identifier
+   * of the previous connection in state INIT
+   */
   previousConnectionId: string;
   clientState?: Any;
   counterparty: Counterparty;
@@ -46,8 +45,6 @@ export interface MsgConnectionOpenTry {
   proofConsensus: Uint8Array;
   consensusHeight: Height;
   signer: string;
-  /** optional proof data for host state machines that are unable to introspect their own consensus state */
-  hostConsensusStateProof: Uint8Array;
 }
 /** MsgConnectionOpenTryResponse defines the Msg/ConnectionOpenTry response type. */
 export interface MsgConnectionOpenTryResponse {}
@@ -72,8 +69,6 @@ export interface MsgConnectionOpenAck {
   proofConsensus: Uint8Array;
   consensusHeight: Height;
   signer: string;
-  /** optional proof data for host state machines that are unable to introspect their own consensus state */
-  hostConsensusStateProof: Uint8Array;
 }
 /** MsgConnectionOpenAckResponse defines the Msg/ConnectionOpenAck response type. */
 export interface MsgConnectionOpenAckResponse {}
@@ -88,10 +83,7 @@ export interface MsgConnectionOpenConfirm {
   proofHeight: Height;
   signer: string;
 }
-/**
- * MsgConnectionOpenConfirmResponse defines the Msg/ConnectionOpenConfirm
- * response type.
- */
+/** MsgConnectionOpenConfirmResponse defines the Msg/ConnectionOpenConfirm response type. */
 export interface MsgConnectionOpenConfirmResponse {}
 function createBaseMsgConnectionOpenInit(): MsgConnectionOpenInit {
   return {
@@ -238,7 +230,6 @@ function createBaseMsgConnectionOpenTry(): MsgConnectionOpenTry {
     proofConsensus: new Uint8Array(),
     consensusHeight: Height.fromPartial({}),
     signer: "",
-    hostConsensusStateProof: new Uint8Array(),
   };
 }
 export const MsgConnectionOpenTry = {
@@ -279,9 +270,6 @@ export const MsgConnectionOpenTry = {
     }
     if (message.signer !== "") {
       writer.uint32(98).string(message.signer);
-    }
-    if (message.hostConsensusStateProof.length !== 0) {
-      writer.uint32(106).bytes(message.hostConsensusStateProof);
     }
     return writer;
   },
@@ -328,9 +316,6 @@ export const MsgConnectionOpenTry = {
         case 12:
           message.signer = reader.string();
           break;
-        case 13:
-          message.hostConsensusStateProof = reader.bytes();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -353,8 +338,6 @@ export const MsgConnectionOpenTry = {
     if (isSet(object.proofConsensus)) obj.proofConsensus = bytesFromBase64(object.proofConsensus);
     if (isSet(object.consensusHeight)) obj.consensusHeight = Height.fromJSON(object.consensusHeight);
     if (isSet(object.signer)) obj.signer = String(object.signer);
-    if (isSet(object.hostConsensusStateProof))
-      obj.hostConsensusStateProof = bytesFromBase64(object.hostConsensusStateProof);
     return obj;
   },
   toJSON(message: MsgConnectionOpenTry): unknown {
@@ -388,10 +371,6 @@ export const MsgConnectionOpenTry = {
     message.consensusHeight !== undefined &&
       (obj.consensusHeight = message.consensusHeight ? Height.toJSON(message.consensusHeight) : undefined);
     message.signer !== undefined && (obj.signer = message.signer);
-    message.hostConsensusStateProof !== undefined &&
-      (obj.hostConsensusStateProof = base64FromBytes(
-        message.hostConsensusStateProof !== undefined ? message.hostConsensusStateProof : new Uint8Array(),
-      ));
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<MsgConnectionOpenTry>, I>>(object: I): MsgConnectionOpenTry {
@@ -418,7 +397,6 @@ export const MsgConnectionOpenTry = {
       message.consensusHeight = Height.fromPartial(object.consensusHeight);
     }
     message.signer = object.signer ?? "";
-    message.hostConsensusStateProof = object.hostConsensusStateProof ?? new Uint8Array();
     return message;
   },
 };
@@ -471,7 +449,6 @@ function createBaseMsgConnectionOpenAck(): MsgConnectionOpenAck {
     proofConsensus: new Uint8Array(),
     consensusHeight: Height.fromPartial({}),
     signer: "",
-    hostConsensusStateProof: new Uint8Array(),
   };
 }
 export const MsgConnectionOpenAck = {
@@ -506,9 +483,6 @@ export const MsgConnectionOpenAck = {
     }
     if (message.signer !== "") {
       writer.uint32(82).string(message.signer);
-    }
-    if (message.hostConsensusStateProof.length !== 0) {
-      writer.uint32(90).bytes(message.hostConsensusStateProof);
     }
     return writer;
   },
@@ -549,9 +523,6 @@ export const MsgConnectionOpenAck = {
         case 10:
           message.signer = reader.string();
           break;
-        case 11:
-          message.hostConsensusStateProof = reader.bytes();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -572,8 +543,6 @@ export const MsgConnectionOpenAck = {
     if (isSet(object.proofConsensus)) obj.proofConsensus = bytesFromBase64(object.proofConsensus);
     if (isSet(object.consensusHeight)) obj.consensusHeight = Height.fromJSON(object.consensusHeight);
     if (isSet(object.signer)) obj.signer = String(object.signer);
-    if (isSet(object.hostConsensusStateProof))
-      obj.hostConsensusStateProof = bytesFromBase64(object.hostConsensusStateProof);
     return obj;
   },
   toJSON(message: MsgConnectionOpenAck): unknown {
@@ -600,10 +569,6 @@ export const MsgConnectionOpenAck = {
     message.consensusHeight !== undefined &&
       (obj.consensusHeight = message.consensusHeight ? Height.toJSON(message.consensusHeight) : undefined);
     message.signer !== undefined && (obj.signer = message.signer);
-    message.hostConsensusStateProof !== undefined &&
-      (obj.hostConsensusStateProof = base64FromBytes(
-        message.hostConsensusStateProof !== undefined ? message.hostConsensusStateProof : new Uint8Array(),
-      ));
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<MsgConnectionOpenAck>, I>>(object: I): MsgConnectionOpenAck {
@@ -626,7 +591,6 @@ export const MsgConnectionOpenAck = {
       message.consensusHeight = Height.fromPartial(object.consensusHeight);
     }
     message.signer = object.signer ?? "";
-    message.hostConsensusStateProof = object.hostConsensusStateProof ?? new Uint8Array();
     return message;
   },
 };
@@ -794,10 +758,7 @@ export interface Msg {
   ConnectionOpenTry(request: MsgConnectionOpenTry): Promise<MsgConnectionOpenTryResponse>;
   /** ConnectionOpenAck defines a rpc handler method for MsgConnectionOpenAck. */
   ConnectionOpenAck(request: MsgConnectionOpenAck): Promise<MsgConnectionOpenAckResponse>;
-  /**
-   * ConnectionOpenConfirm defines a rpc handler method for
-   * MsgConnectionOpenConfirm.
-   */
+  /** ConnectionOpenConfirm defines a rpc handler method for MsgConnectionOpenConfirm. */
   ConnectionOpenConfirm(request: MsgConnectionOpenConfirm): Promise<MsgConnectionOpenConfirmResponse>;
 }
 export class MsgClientImpl implements Msg {

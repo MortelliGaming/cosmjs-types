@@ -8,13 +8,9 @@ export const protobufPackage = "cosmos.evidence.v1beta1";
  * signing misbehavior.
  */
 export interface Equivocation {
-  /** height is the equivocation height. */
   height: bigint;
-  /** time is the equivocation time. */
   time: Timestamp;
-  /** power is the equivocation validator power. */
   power: bigint;
-  /** consensus_address is the equivocation validator consensus address. */
   consensusAddress: string;
 }
 function createBaseEquivocation(): Equivocation {

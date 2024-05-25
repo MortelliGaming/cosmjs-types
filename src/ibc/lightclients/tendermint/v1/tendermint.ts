@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Duration } from "../../../../google/protobuf/duration";
 import { Height } from "../../../core/client/v1/client";
-import { ProofSpec } from "../../../../cosmos/ics23/v1/proofs";
+import { ProofSpec } from "../../../../confio/proofs";
 import { Timestamp } from "../../../../google/protobuf/timestamp";
 import { MerkleRoot } from "../../../core/commitment/v1/commitment";
 import { SignedHeader } from "../../../../tendermint/types/types";
@@ -41,19 +41,21 @@ export interface ClientState {
   proofSpecs: ProofSpec[];
   /**
    * Path at which next upgraded client will be committed.
-   * Each element corresponds to the key for a single CommitmentProof in the
-   * chained proof. NOTE: ClientState must stored under
-   * `{upgradePath}/{upgradeHeight}/clientState` ConsensusState must be stored
-   * under `{upgradepath}/{upgradeHeight}/consensusState` For SDK chains using
-   * the default upgrade module, upgrade_path should be []string{"upgrade",
-   * "upgradedIBCState"}`
+   * Each element corresponds to the key for a single CommitmentProof in the chained proof.
+   * NOTE: ClientState must stored under `{upgradePath}/{upgradeHeight}/clientState`
+   * ConsensusState must be stored under `{upgradepath}/{upgradeHeight}/consensusState`
+   * For SDK chains using the default upgrade module, upgrade_path should be []string{"upgrade", "upgradedIBCState"}`
    */
   upgradePath: string[];
-  /** allow_update_after_expiry is deprecated */
-  /** @deprecated */
+  /**
+   * This flag, when set to true, will allow governance to recover a client
+   * which has expired
+   */
   allowUpdateAfterExpiry: boolean;
-  /** allow_update_after_misbehaviour is deprecated */
-  /** @deprecated */
+  /**
+   * This flag, when set to true, will allow governance to unfreeze a client
+   * whose chain has experienced a misbehaviour event
+   */
   allowUpdateAfterMisbehaviour: boolean;
 }
 /** ConsensusState defines the consensus state from Tendermint. */
@@ -72,8 +74,6 @@ export interface ConsensusState {
  * that implements Misbehaviour interface expected by ICS-02
  */
 export interface Misbehaviour {
-  /** ClientID is deprecated */
-  /** @deprecated */
   clientId: string;
   header1?: Header;
   header2?: Header;
@@ -98,10 +98,7 @@ export interface Header {
   trustedHeight: Height;
   trustedValidators?: ValidatorSet;
 }
-/**
- * Fraction defines the protobuf message type for tmmath.Fraction that only
- * supports positive values.
- */
+/** Fraction defines the protobuf message type for tmmath.Fraction that only supports positive values. */
 export interface Fraction {
   numerator: bigint;
   denominator: bigint;

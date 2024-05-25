@@ -15,6 +15,7 @@ telescope({
     "protos/tendermint/proto",
     "protos/evmos/proto",
     "protos/osmosis/proto",
+    "protos/crossfi/proto",
   ],
   outPath: outPath,
   options: {

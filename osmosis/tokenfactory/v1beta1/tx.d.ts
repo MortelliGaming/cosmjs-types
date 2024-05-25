@@ -261,10 +261,6 @@ export declare const MsgSetDenomMetadata: {
             }[] | undefined;
             base?: string | undefined;
             display?: string | undefined;
-            name?: string | undefined;
-            symbol?: string | undefined;
-            uri?: string | undefined;
-            uriHash?: string | undefined;
         } | undefined;
     } & {
         sender?: string | undefined;
@@ -277,10 +273,6 @@ export declare const MsgSetDenomMetadata: {
             }[] | undefined;
             base?: string | undefined;
             display?: string | undefined;
-            name?: string | undefined;
-            symbol?: string | undefined;
-            uri?: string | undefined;
-            uriHash?: string | undefined;
         } & {
             description?: string | undefined;
             denomUnits?: ({
@@ -302,10 +294,6 @@ export declare const MsgSetDenomMetadata: {
             }[]>, never>) | undefined;
             base?: string | undefined;
             display?: string | undefined;
-            name?: string | undefined;
-            symbol?: string | undefined;
-            uri?: string | undefined;
-            uriHash?: string | undefined;
         } & Record<Exclude<keyof I["metadata"], keyof Metadata>, never>) | undefined;
     } & Record<Exclude<keyof I, keyof MsgSetDenomMetadata>, never>>(object: I): MsgSetDenomMetadata;
 };

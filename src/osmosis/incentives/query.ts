@@ -13,11 +13,11 @@ export interface ModuleToDistributeCoinsResponse {
   coins: Coin[];
 }
 export interface GaugeByIDRequest {
-  /** Gague ID being queried */
+  /** Gauge ID being queried */
   id: bigint;
 }
 export interface GaugeByIDResponse {
-  /** Gauge that corresponds to provided gague ID */
+  /** Gauge that corresponds to provided gauge ID */
   gauge?: Gauge;
 }
 export interface GaugesRequest {
@@ -35,19 +35,19 @@ export interface ActiveGaugesRequest {
   pagination?: PageRequest;
 }
 export interface ActiveGaugesResponse {
-  /** Active gagues only */
+  /** Active gauges only */
   data: Gauge[];
   /** Pagination defines pagination for the response */
   pagination?: PageResponse;
 }
 export interface ActiveGaugesPerDenomRequest {
-  /** Desired denom when querying active gagues */
+  /** Desired denom when querying active gauges */
   denom: string;
   /** Pagination defines pagination for the request */
   pagination?: PageRequest;
 }
 export interface ActiveGaugesPerDenomResponse {
-  /** Active gagues that match denom in query */
+  /** Active gauges that match denom in query */
   data: Gauge[];
   /** Pagination defines pagination for the response */
   pagination?: PageResponse;
@@ -63,13 +63,13 @@ export interface UpcomingGaugesResponse {
   pagination?: PageResponse;
 }
 export interface UpcomingGaugesPerDenomRequest {
-  /** Filter for upcoming gagues that match specific denom */
+  /** Filter for upcoming gauges that match specific denom */
   denom: string;
   /** Pagination defines pagination for the request */
   pagination?: PageRequest;
 }
 export interface UpcomingGaugesPerDenomResponse {
-  /** Upcoming gagues that match denom in query */
+  /** Upcoming gauges that match denom in query */
   upcomingGauges: Gauge[];
   /** Pagination defines pagination for the response */
   pagination?: PageResponse;

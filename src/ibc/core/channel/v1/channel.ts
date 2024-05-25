@@ -199,26 +199,13 @@ export interface PacketState {
   data: Uint8Array;
 }
 /**
- * PacketId is an identifer for a unique Packet
- * Source chains refer to packets by source port/channel
- * Destination chains refer to packets by destination port/channel
- */
-export interface PacketId {
-  /** channel port identifier */
-  portId: string;
-  /** channel unique identifier */
-  channelId: string;
-  /** packet sequence */
-  sequence: bigint;
-}
-/**
  * Acknowledgement is the recommended acknowledgement format to be used by
  * app-specific protocols.
  * NOTE: The field numbers 21 and 22 were explicitly chosen to avoid accidental
  * conflicts with other protobuf message formats used for acknowledgements.
  * The first byte of any message with this format will be the non-ASCII values
  * `0xaa` (result) or `0xb2` (error). Implemented as defined by ICS:
- * https://github.com/cosmos/ibc/tree/master/spec/core/ics-004-channel-and-packet-semantics#acknowledgement-envelope
+ * https://github.com/cosmos/ics/tree/master/spec/ics-004-channel-and-packet-semantics#acknowledgement-envelope
  */
 export interface Acknowledgement {
   result?: Uint8Array;
@@ -689,74 +676,6 @@ export const PacketState = {
       message.sequence = BigInt(object.sequence.toString());
     }
     message.data = object.data ?? new Uint8Array();
-    return message;
-  },
-};
-function createBasePacketId(): PacketId {
-  return {
-    portId: "",
-    channelId: "",
-    sequence: BigInt(0),
-  };
-}
-export const PacketId = {
-  typeUrl: "/ibc.core.channel.v1.PacketId",
-  encode(message: PacketId, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.portId !== "") {
-      writer.uint32(10).string(message.portId);
-    }
-    if (message.channelId !== "") {
-      writer.uint32(18).string(message.channelId);
-    }
-    if (message.sequence !== BigInt(0)) {
-      writer.uint32(24).uint64(message.sequence);
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): PacketId {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBasePacketId();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.portId = reader.string();
-          break;
-        case 2:
-          message.channelId = reader.string();
-          break;
-        case 3:
-          message.sequence = reader.uint64();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): PacketId {
-    const obj = createBasePacketId();
-    if (isSet(object.portId)) obj.portId = String(object.portId);
-    if (isSet(object.channelId)) obj.channelId = String(object.channelId);
-    if (isSet(object.sequence)) obj.sequence = BigInt(object.sequence.toString());
-    return obj;
-  },
-  toJSON(message: PacketId): unknown {
-    const obj: any = {};
-    message.portId !== undefined && (obj.portId = message.portId);
-    message.channelId !== undefined && (obj.channelId = message.channelId);
-    message.sequence !== undefined && (obj.sequence = (message.sequence || BigInt(0)).toString());
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<PacketId>, I>>(object: I): PacketId {
-    const message = createBasePacketId();
-    message.portId = object.portId ?? "";
-    message.channelId = object.channelId ?? "";
-    if (object.sequence !== undefined && object.sequence !== null) {
-      message.sequence = BigInt(object.sequence.toString());
-    }
     return message;
   },
 };

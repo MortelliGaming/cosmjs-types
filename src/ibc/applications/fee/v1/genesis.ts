@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { IdentifiedPacketFees } from "./fee";
-import { PacketId } from "../../../core/channel/v1/channel";
 import { BinaryReader, BinaryWriter } from "../../../../binary";
 import { DeepPartial, Exact, isSet } from "../../../../helpers";
 export const protobufPackage = "ibc.applications.fee.v1";
@@ -49,8 +48,6 @@ export interface RegisteredCounterpartyPayee {
 export interface ForwardRelayerAddress {
   /** the forward relayer address */
   address: string;
-  /** unique packet identifer comprised of the channel ID, port ID and sequence */
-  packetId: PacketId;
 }
 function createBaseGenesisState(): GenesisState {
   return {
@@ -370,7 +367,6 @@ export const RegisteredCounterpartyPayee = {
 function createBaseForwardRelayerAddress(): ForwardRelayerAddress {
   return {
     address: "",
-    packetId: PacketId.fromPartial({}),
   };
 }
 export const ForwardRelayerAddress = {
@@ -378,9 +374,6 @@ export const ForwardRelayerAddress = {
   encode(message: ForwardRelayerAddress, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
     if (message.address !== "") {
       writer.uint32(10).string(message.address);
-    }
-    if (message.packetId !== undefined) {
-      PacketId.encode(message.packetId, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -394,9 +387,6 @@ export const ForwardRelayerAddress = {
         case 1:
           message.address = reader.string();
           break;
-        case 2:
-          message.packetId = PacketId.decode(reader, reader.uint32());
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -407,22 +397,16 @@ export const ForwardRelayerAddress = {
   fromJSON(object: any): ForwardRelayerAddress {
     const obj = createBaseForwardRelayerAddress();
     if (isSet(object.address)) obj.address = String(object.address);
-    if (isSet(object.packetId)) obj.packetId = PacketId.fromJSON(object.packetId);
     return obj;
   },
   toJSON(message: ForwardRelayerAddress): unknown {
     const obj: any = {};
     message.address !== undefined && (obj.address = message.address);
-    message.packetId !== undefined &&
-      (obj.packetId = message.packetId ? PacketId.toJSON(message.packetId) : undefined);
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<ForwardRelayerAddress>, I>>(object: I): ForwardRelayerAddress {
     const message = createBaseForwardRelayerAddress();
     message.address = object.address ?? "";
-    if (object.packetId !== undefined && object.packetId !== null) {
-      message.packetId = PacketId.fromPartial(object.packetId);
-    }
     return message;
   },
 };

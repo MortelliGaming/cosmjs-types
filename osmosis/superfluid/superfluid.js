@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConcentratedPoolUserPositionRecord = exports.UnpoolWhitelistedPools = exports.LockIdIntermediaryAccountConnection = exports.SuperfluidDelegationRecord = exports.OsmoEquivalentMultiplierRecord = exports.SuperfluidIntermediaryAccount = exports.SuperfluidAsset = exports.superfluidAssetTypeToJSON = exports.superfluidAssetTypeFromJSON = exports.SuperfluidAssetType = exports.protobufPackage = void 0;
+exports.DenomRiskFactor = exports.ConcentratedPoolUserPositionRecord = exports.UnpoolWhitelistedPools = exports.LockIdIntermediaryAccountConnection = exports.SuperfluidDelegationRecord = exports.OsmoEquivalentMultiplierRecord = exports.SuperfluidIntermediaryAccount = exports.SuperfluidAsset = exports.superfluidAssetTypeToJSON = exports.superfluidAssetTypeFromJSON = exports.SuperfluidAssetType = exports.protobufPackage = void 0;
 /* eslint-disable */
 const coin_1 = require("../../cosmos/base/v1beta1/coin");
 const lock_1 = require("../lockup/lock");
@@ -54,6 +54,7 @@ function createBaseSuperfluidAsset() {
     return {
         denom: "",
         assetType: 0,
+        pricePoolId: BigInt(0),
     };
 }
 exports.SuperfluidAsset = {
@@ -64,6 +65,9 @@ exports.SuperfluidAsset = {
         }
         if (message.assetType !== 0) {
             writer.uint32(16).int32(message.assetType);
+        }
+        if (message.pricePoolId !== BigInt(0)) {
+            writer.uint32(24).uint64(message.pricePoolId);
         }
         return writer;
     },
@@ -80,6 +84,9 @@ exports.SuperfluidAsset = {
                 case 2:
                     message.assetType = reader.int32();
                     break;
+                case 3:
+                    message.pricePoolId = reader.uint64();
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -93,18 +100,24 @@ exports.SuperfluidAsset = {
             obj.denom = String(object.denom);
         if ((0, helpers_1.isSet)(object.assetType))
             obj.assetType = superfluidAssetTypeFromJSON(object.assetType);
+        if ((0, helpers_1.isSet)(object.pricePoolId))
+            obj.pricePoolId = BigInt(object.pricePoolId.toString());
         return obj;
     },
     toJSON(message) {
         const obj = {};
         message.denom !== undefined && (obj.denom = message.denom);
         message.assetType !== undefined && (obj.assetType = superfluidAssetTypeToJSON(message.assetType));
+        message.pricePoolId !== undefined && (obj.pricePoolId = (message.pricePoolId || BigInt(0)).toString());
         return obj;
     },
     fromPartial(object) {
         const message = createBaseSuperfluidAsset();
         message.denom = object.denom ?? "";
         message.assetType = object.assetType ?? 0;
+        if (object.pricePoolId !== undefined && object.pricePoolId !== null) {
+            message.pricePoolId = BigInt(object.pricePoolId.toString());
+        }
         return message;
     },
 };
@@ -574,6 +587,64 @@ exports.ConcentratedPoolUserPositionRecord = {
         if (object.equivalentStakedAmount !== undefined && object.equivalentStakedAmount !== null) {
             message.equivalentStakedAmount = coin_1.Coin.fromPartial(object.equivalentStakedAmount);
         }
+        return message;
+    },
+};
+function createBaseDenomRiskFactor() {
+    return {
+        denom: "",
+        riskFactor: "",
+    };
+}
+exports.DenomRiskFactor = {
+    typeUrl: "/osmosis.superfluid.DenomRiskFactor",
+    encode(message, writer = binary_1.BinaryWriter.create()) {
+        if (message.denom !== "") {
+            writer.uint32(10).string(message.denom);
+        }
+        if (message.riskFactor !== "") {
+            writer.uint32(18).string(message.riskFactor);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof binary_1.BinaryReader ? input : new binary_1.BinaryReader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = createBaseDenomRiskFactor();
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.denom = reader.string();
+                    break;
+                case 2:
+                    message.riskFactor = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const obj = createBaseDenomRiskFactor();
+        if ((0, helpers_1.isSet)(object.denom))
+            obj.denom = String(object.denom);
+        if ((0, helpers_1.isSet)(object.riskFactor))
+            obj.riskFactor = String(object.riskFactor);
+        return obj;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.denom !== undefined && (obj.denom = message.denom);
+        message.riskFactor !== undefined && (obj.riskFactor = message.riskFactor);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = createBaseDenomRiskFactor();
+        message.denom = object.denom ?? "";
+        message.riskFactor = object.riskFactor ?? "";
         return message;
     },
 };

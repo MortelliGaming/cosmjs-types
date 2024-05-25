@@ -18,20 +18,6 @@ export interface QueryParamsResponse {
   /** params defines the parameters of the module. */
   params: Params;
 }
-/** QueryValidatorDistributionInfoRequest is the request type for the Query/ValidatorDistributionInfo RPC method. */
-export interface QueryValidatorDistributionInfoRequest {
-  /** validator_address defines the validator address to query for. */
-  validatorAddress: string;
-}
-/** QueryValidatorDistributionInfoResponse is the response type for the Query/ValidatorDistributionInfo RPC method. */
-export interface QueryValidatorDistributionInfoResponse {
-  /** operator_address defines the validator operator address. */
-  operatorAddress: string;
-  /** self_bond_rewards defines the self delegations rewards. */
-  selfBondRewards: DecCoin[];
-  /** commission defines the commission the validator received. */
-  commission: DecCoin[];
-}
 /**
  * QueryValidatorOutstandingRewardsRequest is the request type for the
  * Query/ValidatorOutstandingRewards RPC method.
@@ -60,7 +46,7 @@ export interface QueryValidatorCommissionRequest {
  * Query/ValidatorCommission RPC method
  */
 export interface QueryValidatorCommissionResponse {
-  /** commission defines the commission the validator received. */
+  /** commission defines the commision the validator received. */
   commission: ValidatorAccumulatedCommission;
 }
 /**
@@ -248,138 +234,6 @@ export const QueryParamsResponse = {
     if (object.params !== undefined && object.params !== null) {
       message.params = Params.fromPartial(object.params);
     }
-    return message;
-  },
-};
-function createBaseQueryValidatorDistributionInfoRequest(): QueryValidatorDistributionInfoRequest {
-  return {
-    validatorAddress: "",
-  };
-}
-export const QueryValidatorDistributionInfoRequest = {
-  typeUrl: "/cosmos.distribution.v1beta1.QueryValidatorDistributionInfoRequest",
-  encode(
-    message: QueryValidatorDistributionInfoRequest,
-    writer: BinaryWriter = BinaryWriter.create(),
-  ): BinaryWriter {
-    if (message.validatorAddress !== "") {
-      writer.uint32(10).string(message.validatorAddress);
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): QueryValidatorDistributionInfoRequest {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryValidatorDistributionInfoRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.validatorAddress = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): QueryValidatorDistributionInfoRequest {
-    const obj = createBaseQueryValidatorDistributionInfoRequest();
-    if (isSet(object.validatorAddress)) obj.validatorAddress = String(object.validatorAddress);
-    return obj;
-  },
-  toJSON(message: QueryValidatorDistributionInfoRequest): unknown {
-    const obj: any = {};
-    message.validatorAddress !== undefined && (obj.validatorAddress = message.validatorAddress);
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<QueryValidatorDistributionInfoRequest>, I>>(
-    object: I,
-  ): QueryValidatorDistributionInfoRequest {
-    const message = createBaseQueryValidatorDistributionInfoRequest();
-    message.validatorAddress = object.validatorAddress ?? "";
-    return message;
-  },
-};
-function createBaseQueryValidatorDistributionInfoResponse(): QueryValidatorDistributionInfoResponse {
-  return {
-    operatorAddress: "",
-    selfBondRewards: [],
-    commission: [],
-  };
-}
-export const QueryValidatorDistributionInfoResponse = {
-  typeUrl: "/cosmos.distribution.v1beta1.QueryValidatorDistributionInfoResponse",
-  encode(
-    message: QueryValidatorDistributionInfoResponse,
-    writer: BinaryWriter = BinaryWriter.create(),
-  ): BinaryWriter {
-    if (message.operatorAddress !== "") {
-      writer.uint32(10).string(message.operatorAddress);
-    }
-    for (const v of message.selfBondRewards) {
-      DecCoin.encode(v!, writer.uint32(18).fork()).ldelim();
-    }
-    for (const v of message.commission) {
-      DecCoin.encode(v!, writer.uint32(26).fork()).ldelim();
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): QueryValidatorDistributionInfoResponse {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryValidatorDistributionInfoResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.operatorAddress = reader.string();
-          break;
-        case 2:
-          message.selfBondRewards.push(DecCoin.decode(reader, reader.uint32()));
-          break;
-        case 3:
-          message.commission.push(DecCoin.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): QueryValidatorDistributionInfoResponse {
-    const obj = createBaseQueryValidatorDistributionInfoResponse();
-    if (isSet(object.operatorAddress)) obj.operatorAddress = String(object.operatorAddress);
-    if (Array.isArray(object?.selfBondRewards))
-      obj.selfBondRewards = object.selfBondRewards.map((e: any) => DecCoin.fromJSON(e));
-    if (Array.isArray(object?.commission))
-      obj.commission = object.commission.map((e: any) => DecCoin.fromJSON(e));
-    return obj;
-  },
-  toJSON(message: QueryValidatorDistributionInfoResponse): unknown {
-    const obj: any = {};
-    message.operatorAddress !== undefined && (obj.operatorAddress = message.operatorAddress);
-    if (message.selfBondRewards) {
-      obj.selfBondRewards = message.selfBondRewards.map((e) => (e ? DecCoin.toJSON(e) : undefined));
-    } else {
-      obj.selfBondRewards = [];
-    }
-    if (message.commission) {
-      obj.commission = message.commission.map((e) => (e ? DecCoin.toJSON(e) : undefined));
-    } else {
-      obj.commission = [];
-    }
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<QueryValidatorDistributionInfoResponse>, I>>(
-    object: I,
-  ): QueryValidatorDistributionInfoResponse {
-    const message = createBaseQueryValidatorDistributionInfoResponse();
-    message.operatorAddress = object.operatorAddress ?? "";
-    message.selfBondRewards = object.selfBondRewards?.map((e) => DecCoin.fromPartial(e)) || [];
-    message.commission = object.commission?.map((e) => DecCoin.fromPartial(e)) || [];
     return message;
   },
 };
@@ -1280,10 +1134,6 @@ export const QueryCommunityPoolResponse = {
 export interface Query {
   /** Params queries params of the distribution module. */
   Params(request?: QueryParamsRequest): Promise<QueryParamsResponse>;
-  /** ValidatorDistributionInfo queries validator commission and self-delegation rewards for validator */
-  ValidatorDistributionInfo(
-    request: QueryValidatorDistributionInfoRequest,
-  ): Promise<QueryValidatorDistributionInfoResponse>;
   /** ValidatorOutstandingRewards queries rewards of a validator address. */
   ValidatorOutstandingRewards(
     request: QueryValidatorOutstandingRewardsRequest,
@@ -1315,7 +1165,6 @@ export class QueryClientImpl implements Query {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.Params = this.Params.bind(this);
-    this.ValidatorDistributionInfo = this.ValidatorDistributionInfo.bind(this);
     this.ValidatorOutstandingRewards = this.ValidatorOutstandingRewards.bind(this);
     this.ValidatorCommission = this.ValidatorCommission.bind(this);
     this.ValidatorSlashes = this.ValidatorSlashes.bind(this);
@@ -1329,13 +1178,6 @@ export class QueryClientImpl implements Query {
     const data = QueryParamsRequest.encode(request).finish();
     const promise = this.rpc.request("cosmos.distribution.v1beta1.Query", "Params", data);
     return promise.then((data) => QueryParamsResponse.decode(new BinaryReader(data)));
-  }
-  ValidatorDistributionInfo(
-    request: QueryValidatorDistributionInfoRequest,
-  ): Promise<QueryValidatorDistributionInfoResponse> {
-    const data = QueryValidatorDistributionInfoRequest.encode(request).finish();
-    const promise = this.rpc.request("cosmos.distribution.v1beta1.Query", "ValidatorDistributionInfo", data);
-    return promise.then((data) => QueryValidatorDistributionInfoResponse.decode(new BinaryReader(data)));
   }
   ValidatorOutstandingRewards(
     request: QueryValidatorOutstandingRewardsRequest,

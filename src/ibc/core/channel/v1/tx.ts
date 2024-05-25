@@ -4,46 +4,6 @@ import { Height } from "../../client/v1/client";
 import { BinaryReader, BinaryWriter } from "../../../../binary";
 import { isSet, DeepPartial, Exact, bytesFromBase64, base64FromBytes, Rpc } from "../../../../helpers";
 export const protobufPackage = "ibc.core.channel.v1";
-/** ResponseResultType defines the possible outcomes of the execution of a message */
-export enum ResponseResultType {
-  /** RESPONSE_RESULT_TYPE_UNSPECIFIED - Default zero value enumeration */
-  RESPONSE_RESULT_TYPE_UNSPECIFIED = 0,
-  /** RESPONSE_RESULT_TYPE_NOOP - The message did not call the IBC application callbacks (because, for example, the packet had already been relayed) */
-  RESPONSE_RESULT_TYPE_NOOP = 1,
-  /** RESPONSE_RESULT_TYPE_SUCCESS - The message was executed successfully */
-  RESPONSE_RESULT_TYPE_SUCCESS = 2,
-  UNRECOGNIZED = -1,
-}
-export function responseResultTypeFromJSON(object: any): ResponseResultType {
-  switch (object) {
-    case 0:
-    case "RESPONSE_RESULT_TYPE_UNSPECIFIED":
-      return ResponseResultType.RESPONSE_RESULT_TYPE_UNSPECIFIED;
-    case 1:
-    case "RESPONSE_RESULT_TYPE_NOOP":
-      return ResponseResultType.RESPONSE_RESULT_TYPE_NOOP;
-    case 2:
-    case "RESPONSE_RESULT_TYPE_SUCCESS":
-      return ResponseResultType.RESPONSE_RESULT_TYPE_SUCCESS;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return ResponseResultType.UNRECOGNIZED;
-  }
-}
-export function responseResultTypeToJSON(object: ResponseResultType): string {
-  switch (object) {
-    case ResponseResultType.RESPONSE_RESULT_TYPE_UNSPECIFIED:
-      return "RESPONSE_RESULT_TYPE_UNSPECIFIED";
-    case ResponseResultType.RESPONSE_RESULT_TYPE_NOOP:
-      return "RESPONSE_RESULT_TYPE_NOOP";
-    case ResponseResultType.RESPONSE_RESULT_TYPE_SUCCESS:
-      return "RESPONSE_RESULT_TYPE_SUCCESS";
-    case ResponseResultType.UNRECOGNIZED:
-    default:
-      return "UNRECOGNIZED";
-  }
-}
 /**
  * MsgChannelOpenInit defines an sdk.Msg to initialize a channel handshake. It
  * is called by a relayer on Chain A.
@@ -54,21 +14,18 @@ export interface MsgChannelOpenInit {
   signer: string;
 }
 /** MsgChannelOpenInitResponse defines the Msg/ChannelOpenInit response type. */
-export interface MsgChannelOpenInitResponse {
-  channelId: string;
-  version: string;
-}
+export interface MsgChannelOpenInitResponse {}
 /**
  * MsgChannelOpenInit defines a msg sent by a Relayer to try to open a channel
- * on Chain B. The version field within the Channel field has been deprecated. Its
- * value will be ignored by core IBC.
+ * on Chain B.
  */
 export interface MsgChannelOpenTry {
   portId: string;
-  /** Deprecated: this field is unused. Crossing hello's are no longer supported in core IBC. */
-  /** @deprecated */
+  /**
+   * in the case of crossing hello's, when both chains call OpenInit, we need the channel identifier
+   * of the previous channel in state INIT
+   */
   previousChannelId: string;
-  /** NOTE: the version field within the channel has been deprecated. Its value will be ignored by core IBC. */
   channel: Channel;
   counterpartyVersion: string;
   proofInit: Uint8Array;
@@ -76,9 +33,7 @@ export interface MsgChannelOpenTry {
   signer: string;
 }
 /** MsgChannelOpenTryResponse defines the Msg/ChannelOpenTry response type. */
-export interface MsgChannelOpenTryResponse {
-  version: string;
-}
+export interface MsgChannelOpenTryResponse {}
 /**
  * MsgChannelOpenAck defines a msg sent by a Relayer to Chain A to acknowledge
  * the change of channel state to TRYOPEN on Chain B.
@@ -105,10 +60,7 @@ export interface MsgChannelOpenConfirm {
   proofHeight: Height;
   signer: string;
 }
-/**
- * MsgChannelOpenConfirmResponse defines the Msg/ChannelOpenConfirm response
- * type.
- */
+/** MsgChannelOpenConfirmResponse defines the Msg/ChannelOpenConfirm response type. */
 export interface MsgChannelOpenConfirmResponse {}
 /**
  * MsgChannelCloseInit defines a msg sent by a Relayer to Chain A
@@ -132,10 +84,7 @@ export interface MsgChannelCloseConfirm {
   proofHeight: Height;
   signer: string;
 }
-/**
- * MsgChannelCloseConfirmResponse defines the Msg/ChannelCloseConfirm response
- * type.
- */
+/** MsgChannelCloseConfirmResponse defines the Msg/ChannelCloseConfirm response type. */
 export interface MsgChannelCloseConfirmResponse {}
 /** MsgRecvPacket receives incoming IBC packet */
 export interface MsgRecvPacket {
@@ -145,9 +94,7 @@ export interface MsgRecvPacket {
   signer: string;
 }
 /** MsgRecvPacketResponse defines the Msg/RecvPacket response type. */
-export interface MsgRecvPacketResponse {
-  result: ResponseResultType;
-}
+export interface MsgRecvPacketResponse {}
 /** MsgTimeout receives timed-out packet */
 export interface MsgTimeout {
   packet: Packet;
@@ -157,9 +104,7 @@ export interface MsgTimeout {
   signer: string;
 }
 /** MsgTimeoutResponse defines the Msg/Timeout response type. */
-export interface MsgTimeoutResponse {
-  result: ResponseResultType;
-}
+export interface MsgTimeoutResponse {}
 /** MsgTimeoutOnClose timed-out packet upon counterparty channel closure. */
 export interface MsgTimeoutOnClose {
   packet: Packet;
@@ -170,9 +115,7 @@ export interface MsgTimeoutOnClose {
   signer: string;
 }
 /** MsgTimeoutOnCloseResponse defines the Msg/TimeoutOnClose response type. */
-export interface MsgTimeoutOnCloseResponse {
-  result: ResponseResultType;
-}
+export interface MsgTimeoutOnCloseResponse {}
 /** MsgAcknowledgement receives incoming IBC acknowledgement */
 export interface MsgAcknowledgement {
   packet: Packet;
@@ -182,9 +125,7 @@ export interface MsgAcknowledgement {
   signer: string;
 }
 /** MsgAcknowledgementResponse defines the Msg/Acknowledgement response type. */
-export interface MsgAcknowledgementResponse {
-  result: ResponseResultType;
-}
+export interface MsgAcknowledgementResponse {}
 function createBaseMsgChannelOpenInit(): MsgChannelOpenInit {
   return {
     portId: "",
@@ -255,20 +196,11 @@ export const MsgChannelOpenInit = {
   },
 };
 function createBaseMsgChannelOpenInitResponse(): MsgChannelOpenInitResponse {
-  return {
-    channelId: "",
-    version: "",
-  };
+  return {};
 }
 export const MsgChannelOpenInitResponse = {
   typeUrl: "/ibc.core.channel.v1.MsgChannelOpenInitResponse",
-  encode(message: MsgChannelOpenInitResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.channelId !== "") {
-      writer.uint32(10).string(message.channelId);
-    }
-    if (message.version !== "") {
-      writer.uint32(18).string(message.version);
-    }
+  encode(_: MsgChannelOpenInitResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
     return writer;
   },
   decode(input: BinaryReader | Uint8Array, length?: number): MsgChannelOpenInitResponse {
@@ -278,12 +210,6 @@ export const MsgChannelOpenInitResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.channelId = reader.string();
-          break;
-        case 2:
-          message.version = reader.string();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -291,24 +217,16 @@ export const MsgChannelOpenInitResponse = {
     }
     return message;
   },
-  fromJSON(object: any): MsgChannelOpenInitResponse {
+  fromJSON(_: any): MsgChannelOpenInitResponse {
     const obj = createBaseMsgChannelOpenInitResponse();
-    if (isSet(object.channelId)) obj.channelId = String(object.channelId);
-    if (isSet(object.version)) obj.version = String(object.version);
     return obj;
   },
-  toJSON(message: MsgChannelOpenInitResponse): unknown {
+  toJSON(_: MsgChannelOpenInitResponse): unknown {
     const obj: any = {};
-    message.channelId !== undefined && (obj.channelId = message.channelId);
-    message.version !== undefined && (obj.version = message.version);
     return obj;
   },
-  fromPartial<I extends Exact<DeepPartial<MsgChannelOpenInitResponse>, I>>(
-    object: I,
-  ): MsgChannelOpenInitResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgChannelOpenInitResponse>, I>>(_: I): MsgChannelOpenInitResponse {
     const message = createBaseMsgChannelOpenInitResponse();
-    message.channelId = object.channelId ?? "";
-    message.version = object.version ?? "";
     return message;
   },
 };
@@ -428,16 +346,11 @@ export const MsgChannelOpenTry = {
   },
 };
 function createBaseMsgChannelOpenTryResponse(): MsgChannelOpenTryResponse {
-  return {
-    version: "",
-  };
+  return {};
 }
 export const MsgChannelOpenTryResponse = {
   typeUrl: "/ibc.core.channel.v1.MsgChannelOpenTryResponse",
-  encode(message: MsgChannelOpenTryResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.version !== "") {
-      writer.uint32(10).string(message.version);
-    }
+  encode(_: MsgChannelOpenTryResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
     return writer;
   },
   decode(input: BinaryReader | Uint8Array, length?: number): MsgChannelOpenTryResponse {
@@ -447,9 +360,6 @@ export const MsgChannelOpenTryResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.version = reader.string();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -457,21 +367,16 @@ export const MsgChannelOpenTryResponse = {
     }
     return message;
   },
-  fromJSON(object: any): MsgChannelOpenTryResponse {
+  fromJSON(_: any): MsgChannelOpenTryResponse {
     const obj = createBaseMsgChannelOpenTryResponse();
-    if (isSet(object.version)) obj.version = String(object.version);
     return obj;
   },
-  toJSON(message: MsgChannelOpenTryResponse): unknown {
+  toJSON(_: MsgChannelOpenTryResponse): unknown {
     const obj: any = {};
-    message.version !== undefined && (obj.version = message.version);
     return obj;
   },
-  fromPartial<I extends Exact<DeepPartial<MsgChannelOpenTryResponse>, I>>(
-    object: I,
-  ): MsgChannelOpenTryResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgChannelOpenTryResponse>, I>>(_: I): MsgChannelOpenTryResponse {
     const message = createBaseMsgChannelOpenTryResponse();
-    message.version = object.version ?? "";
     return message;
   },
 };
@@ -1065,16 +970,11 @@ export const MsgRecvPacket = {
   },
 };
 function createBaseMsgRecvPacketResponse(): MsgRecvPacketResponse {
-  return {
-    result: 0,
-  };
+  return {};
 }
 export const MsgRecvPacketResponse = {
   typeUrl: "/ibc.core.channel.v1.MsgRecvPacketResponse",
-  encode(message: MsgRecvPacketResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.result !== 0) {
-      writer.uint32(8).int32(message.result);
-    }
+  encode(_: MsgRecvPacketResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
     return writer;
   },
   decode(input: BinaryReader | Uint8Array, length?: number): MsgRecvPacketResponse {
@@ -1084,9 +984,6 @@ export const MsgRecvPacketResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.result = reader.int32() as any;
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1094,19 +991,16 @@ export const MsgRecvPacketResponse = {
     }
     return message;
   },
-  fromJSON(object: any): MsgRecvPacketResponse {
+  fromJSON(_: any): MsgRecvPacketResponse {
     const obj = createBaseMsgRecvPacketResponse();
-    if (isSet(object.result)) obj.result = responseResultTypeFromJSON(object.result);
     return obj;
   },
-  toJSON(message: MsgRecvPacketResponse): unknown {
+  toJSON(_: MsgRecvPacketResponse): unknown {
     const obj: any = {};
-    message.result !== undefined && (obj.result = responseResultTypeToJSON(message.result));
     return obj;
   },
-  fromPartial<I extends Exact<DeepPartial<MsgRecvPacketResponse>, I>>(object: I): MsgRecvPacketResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgRecvPacketResponse>, I>>(_: I): MsgRecvPacketResponse {
     const message = createBaseMsgRecvPacketResponse();
-    message.result = object.result ?? 0;
     return message;
   },
 };
@@ -1208,16 +1102,11 @@ export const MsgTimeout = {
   },
 };
 function createBaseMsgTimeoutResponse(): MsgTimeoutResponse {
-  return {
-    result: 0,
-  };
+  return {};
 }
 export const MsgTimeoutResponse = {
   typeUrl: "/ibc.core.channel.v1.MsgTimeoutResponse",
-  encode(message: MsgTimeoutResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.result !== 0) {
-      writer.uint32(8).int32(message.result);
-    }
+  encode(_: MsgTimeoutResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
     return writer;
   },
   decode(input: BinaryReader | Uint8Array, length?: number): MsgTimeoutResponse {
@@ -1227,9 +1116,6 @@ export const MsgTimeoutResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.result = reader.int32() as any;
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1237,19 +1123,16 @@ export const MsgTimeoutResponse = {
     }
     return message;
   },
-  fromJSON(object: any): MsgTimeoutResponse {
+  fromJSON(_: any): MsgTimeoutResponse {
     const obj = createBaseMsgTimeoutResponse();
-    if (isSet(object.result)) obj.result = responseResultTypeFromJSON(object.result);
     return obj;
   },
-  toJSON(message: MsgTimeoutResponse): unknown {
+  toJSON(_: MsgTimeoutResponse): unknown {
     const obj: any = {};
-    message.result !== undefined && (obj.result = responseResultTypeToJSON(message.result));
     return obj;
   },
-  fromPartial<I extends Exact<DeepPartial<MsgTimeoutResponse>, I>>(object: I): MsgTimeoutResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgTimeoutResponse>, I>>(_: I): MsgTimeoutResponse {
     const message = createBaseMsgTimeoutResponse();
-    message.result = object.result ?? 0;
     return message;
   },
 };
@@ -1364,16 +1247,11 @@ export const MsgTimeoutOnClose = {
   },
 };
 function createBaseMsgTimeoutOnCloseResponse(): MsgTimeoutOnCloseResponse {
-  return {
-    result: 0,
-  };
+  return {};
 }
 export const MsgTimeoutOnCloseResponse = {
   typeUrl: "/ibc.core.channel.v1.MsgTimeoutOnCloseResponse",
-  encode(message: MsgTimeoutOnCloseResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.result !== 0) {
-      writer.uint32(8).int32(message.result);
-    }
+  encode(_: MsgTimeoutOnCloseResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
     return writer;
   },
   decode(input: BinaryReader | Uint8Array, length?: number): MsgTimeoutOnCloseResponse {
@@ -1383,9 +1261,6 @@ export const MsgTimeoutOnCloseResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.result = reader.int32() as any;
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1393,21 +1268,16 @@ export const MsgTimeoutOnCloseResponse = {
     }
     return message;
   },
-  fromJSON(object: any): MsgTimeoutOnCloseResponse {
+  fromJSON(_: any): MsgTimeoutOnCloseResponse {
     const obj = createBaseMsgTimeoutOnCloseResponse();
-    if (isSet(object.result)) obj.result = responseResultTypeFromJSON(object.result);
     return obj;
   },
-  toJSON(message: MsgTimeoutOnCloseResponse): unknown {
+  toJSON(_: MsgTimeoutOnCloseResponse): unknown {
     const obj: any = {};
-    message.result !== undefined && (obj.result = responseResultTypeToJSON(message.result));
     return obj;
   },
-  fromPartial<I extends Exact<DeepPartial<MsgTimeoutOnCloseResponse>, I>>(
-    object: I,
-  ): MsgTimeoutOnCloseResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgTimeoutOnCloseResponse>, I>>(_: I): MsgTimeoutOnCloseResponse {
     const message = createBaseMsgTimeoutOnCloseResponse();
-    message.result = object.result ?? 0;
     return message;
   },
 };
@@ -1509,16 +1379,11 @@ export const MsgAcknowledgement = {
   },
 };
 function createBaseMsgAcknowledgementResponse(): MsgAcknowledgementResponse {
-  return {
-    result: 0,
-  };
+  return {};
 }
 export const MsgAcknowledgementResponse = {
   typeUrl: "/ibc.core.channel.v1.MsgAcknowledgementResponse",
-  encode(message: MsgAcknowledgementResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.result !== 0) {
-      writer.uint32(8).int32(message.result);
-    }
+  encode(_: MsgAcknowledgementResponse, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
     return writer;
   },
   decode(input: BinaryReader | Uint8Array, length?: number): MsgAcknowledgementResponse {
@@ -1528,9 +1393,6 @@ export const MsgAcknowledgementResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.result = reader.int32() as any;
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1538,21 +1400,16 @@ export const MsgAcknowledgementResponse = {
     }
     return message;
   },
-  fromJSON(object: any): MsgAcknowledgementResponse {
+  fromJSON(_: any): MsgAcknowledgementResponse {
     const obj = createBaseMsgAcknowledgementResponse();
-    if (isSet(object.result)) obj.result = responseResultTypeFromJSON(object.result);
     return obj;
   },
-  toJSON(message: MsgAcknowledgementResponse): unknown {
+  toJSON(_: MsgAcknowledgementResponse): unknown {
     const obj: any = {};
-    message.result !== undefined && (obj.result = responseResultTypeToJSON(message.result));
     return obj;
   },
-  fromPartial<I extends Exact<DeepPartial<MsgAcknowledgementResponse>, I>>(
-    object: I,
-  ): MsgAcknowledgementResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgAcknowledgementResponse>, I>>(_: I): MsgAcknowledgementResponse {
     const message = createBaseMsgAcknowledgementResponse();
-    message.result = object.result ?? 0;
     return message;
   },
 };
@@ -1568,10 +1425,7 @@ export interface Msg {
   ChannelOpenConfirm(request: MsgChannelOpenConfirm): Promise<MsgChannelOpenConfirmResponse>;
   /** ChannelCloseInit defines a rpc handler method for MsgChannelCloseInit. */
   ChannelCloseInit(request: MsgChannelCloseInit): Promise<MsgChannelCloseInitResponse>;
-  /**
-   * ChannelCloseConfirm defines a rpc handler method for
-   * MsgChannelCloseConfirm.
-   */
+  /** ChannelCloseConfirm defines a rpc handler method for MsgChannelCloseConfirm. */
   ChannelCloseConfirm(request: MsgChannelCloseConfirm): Promise<MsgChannelCloseConfirmResponse>;
   /** RecvPacket defines a rpc handler method for MsgRecvPacket. */
   RecvPacket(request: MsgRecvPacket): Promise<MsgRecvPacketResponse>;

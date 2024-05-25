@@ -17,13 +17,14 @@ export interface Plan {
    */
   name: string;
   /**
-   * Deprecated: Time based upgrades have been deprecated. Time based upgrade logic
-   * has been removed from the SDK.
-   * If this field is not empty, an error will be thrown.
+   * The time after which the upgrade must be performed.
+   * Leave set to its zero value to use a pre-defined Height instead.
    */
-  /** @deprecated */
   time: Timestamp;
-  /** The height at which the upgrade must be performed. */
+  /**
+   * The height at which the upgrade must be performed.
+   * Only used if Time is not set.
+   */
   height: bigint;
   /**
    * Any application specific upgrade info to be included on-chain
@@ -31,51 +32,30 @@ export interface Plan {
    */
   info: string;
   /**
-   * Deprecated: UpgradedClientState field has been deprecated. IBC upgrade logic has been
-   * moved to the IBC module in the sub module 02-client.
-   * If this field is not empty, an error will be thrown.
+   * IBC-enabled chains can opt-in to including the upgraded client state in its upgrade plan
+   * This will make the chain commit to the correct upgraded (self) client state before the upgrade occurs,
+   * so that connecting chains can verify that the new upgraded client is valid by verifying a proof on the
+   * previous version of the chain.
+   * This will allow IBC connections to persist smoothly across planned chain upgrades
    */
-  /** @deprecated */
   upgradedClientState?: Any;
 }
 /**
  * SoftwareUpgradeProposal is a gov Content type for initiating a software
  * upgrade.
- * Deprecated: This legacy proposal is deprecated in favor of Msg-based gov
- * proposals, see MsgSoftwareUpgrade.
  */
-/** @deprecated */
 export interface SoftwareUpgradeProposal {
-  /** title of the proposal */
   title: string;
-  /** description of the proposal */
   description: string;
-  /** plan of the proposal */
   plan: Plan;
 }
 /**
  * CancelSoftwareUpgradeProposal is a gov Content type for cancelling a software
  * upgrade.
- * Deprecated: This legacy proposal is deprecated in favor of Msg-based gov
- * proposals, see MsgCancelUpgrade.
  */
-/** @deprecated */
 export interface CancelSoftwareUpgradeProposal {
-  /** title of the proposal */
   title: string;
-  /** description of the proposal */
   description: string;
-}
-/**
- * ModuleVersion specifies a module and its consensus version.
- *
- * Since: cosmos-sdk 0.43
- */
-export interface ModuleVersion {
-  /** name of the app module */
-  name: string;
-  /** consensus version of the app module */
-  version: bigint;
 }
 function createBasePlan(): Plan {
   return {
@@ -295,64 +275,6 @@ export const CancelSoftwareUpgradeProposal = {
     const message = createBaseCancelSoftwareUpgradeProposal();
     message.title = object.title ?? "";
     message.description = object.description ?? "";
-    return message;
-  },
-};
-function createBaseModuleVersion(): ModuleVersion {
-  return {
-    name: "",
-    version: BigInt(0),
-  };
-}
-export const ModuleVersion = {
-  typeUrl: "/cosmos.upgrade.v1beta1.ModuleVersion",
-  encode(message: ModuleVersion, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.name !== "") {
-      writer.uint32(10).string(message.name);
-    }
-    if (message.version !== BigInt(0)) {
-      writer.uint32(16).uint64(message.version);
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): ModuleVersion {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseModuleVersion();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.name = reader.string();
-          break;
-        case 2:
-          message.version = reader.uint64();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): ModuleVersion {
-    const obj = createBaseModuleVersion();
-    if (isSet(object.name)) obj.name = String(object.name);
-    if (isSet(object.version)) obj.version = BigInt(object.version.toString());
-    return obj;
-  },
-  toJSON(message: ModuleVersion): unknown {
-    const obj: any = {};
-    message.name !== undefined && (obj.name = message.name);
-    message.version !== undefined && (obj.version = (message.version || BigInt(0)).toString());
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<ModuleVersion>, I>>(object: I): ModuleVersion {
-    const message = createBaseModuleVersion();
-    message.name = object.name ?? "";
-    if (object.version !== undefined && object.version !== null) {
-      message.version = BigInt(object.version.toString());
-    }
     return message;
   },
 };

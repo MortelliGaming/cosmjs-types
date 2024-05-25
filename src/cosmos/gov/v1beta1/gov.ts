@@ -70,7 +70,7 @@ export function voteOptionToJSON(object: VoteOption): string {
 }
 /** ProposalStatus enumerates the valid statuses of a proposal. */
 export enum ProposalStatus {
-  /** PROPOSAL_STATUS_UNSPECIFIED - PROPOSAL_STATUS_UNSPECIFIED defines the default proposal status. */
+  /** PROPOSAL_STATUS_UNSPECIFIED - PROPOSAL_STATUS_UNSPECIFIED defines the default propopsal status. */
   PROPOSAL_STATUS_UNSPECIFIED = 0,
   /**
    * PROPOSAL_STATUS_DEPOSIT_PERIOD - PROPOSAL_STATUS_DEPOSIT_PERIOD defines a proposal status during the deposit
@@ -145,24 +145,11 @@ export function proposalStatusToJSON(object: ProposalStatus): string {
   }
 }
 /**
- * WeightedVoteOption defines a unit of vote for vote split.
- *
- * Since: cosmos-sdk 0.43
- */
-export interface WeightedVoteOption {
-  /** option defines the valid vote options, it must not contain duplicate vote options. */
-  option: VoteOption;
-  /** weight is the vote weight associated with the vote option. */
-  weight: string;
-}
-/**
  * TextProposal defines a standard text proposal whose changes need to be
  * manually updated in case of approval.
  */
 export interface TextProposal {
-  /** title of the proposal. */
   title: string;
-  /** description associated with the proposal. */
   description: string;
 }
 /**
@@ -170,47 +157,27 @@ export interface TextProposal {
  * proposal.
  */
 export interface Deposit {
-  /** proposal_id defines the unique id of the proposal. */
   proposalId: bigint;
-  /** depositor defines the deposit addresses from the proposals. */
   depositor: string;
-  /** amount to be deposited by depositor. */
   amount: Coin[];
 }
 /** Proposal defines the core field members of a governance proposal. */
 export interface Proposal {
-  /** proposal_id defines the unique id of the proposal. */
   proposalId: bigint;
-  /** content is the proposal's content. */
   content?: Any;
-  /** status defines the proposal status. */
   status: ProposalStatus;
-  /**
-   * final_tally_result is the final tally result of the proposal. When
-   * querying a proposal via gRPC, this field is not populated until the
-   * proposal's voting period has ended.
-   */
   finalTallyResult: TallyResult;
-  /** submit_time is the time of proposal submission. */
   submitTime: Timestamp;
-  /** deposit_end_time is the end time for deposition. */
   depositEndTime: Timestamp;
-  /** total_deposit is the total deposit on the proposal. */
   totalDeposit: Coin[];
-  /** voting_start_time is the starting time to vote on a proposal. */
   votingStartTime: Timestamp;
-  /** voting_end_time is the end time of voting on a proposal. */
   votingEndTime: Timestamp;
 }
 /** TallyResult defines a standard tally for a governance proposal. */
 export interface TallyResult {
-  /** yes is the number of yes votes on a proposal. */
   yes: string;
-  /** abstain is the number of abstain votes on a proposal. */
   abstain: string;
-  /** no is the number of no votes on a proposal. */
   no: string;
-  /** no_with_veto is the number of no with veto votes on a proposal. */
   noWithVeto: string;
 }
 /**
@@ -218,23 +185,9 @@ export interface TallyResult {
  * A Vote consists of a proposal ID, the voter, and the vote option.
  */
 export interface Vote {
-  /** proposal_id defines the unique id of the proposal. */
   proposalId: bigint;
-  /** voter is the voter address of the proposal. */
   voter: string;
-  /**
-   * Deprecated: Prefer to use `options` instead. This field is set in queries
-   * if and only if `len(options) == 1` and that option has weight 1. In all
-   * other cases, this field will default to VOTE_OPTION_UNSPECIFIED.
-   */
-  /** @deprecated */
   option: VoteOption;
-  /**
-   * options is the weighted vote options.
-   *
-   * Since: cosmos-sdk 0.43
-   */
-  options: WeightedVoteOption[];
 }
 /** DepositParams defines the params for deposits on governance proposals. */
 export interface DepositParams {
@@ -242,86 +195,30 @@ export interface DepositParams {
   minDeposit: Coin[];
   /**
    * Maximum period for Atom holders to deposit on a proposal. Initial value: 2
-   * months.
+   *  months.
    */
   maxDepositPeriod: Duration;
 }
 /** VotingParams defines the params for voting on governance proposals. */
 export interface VotingParams {
-  /** Duration of the voting period. */
+  /** Length of the voting period. */
   votingPeriod: Duration;
 }
 /** TallyParams defines the params for tallying votes on governance proposals. */
 export interface TallyParams {
   /**
    * Minimum percentage of total stake needed to vote for a result to be
-   * considered valid.
+   *  considered valid.
    */
   quorum: Uint8Array;
   /** Minimum proportion of Yes votes for proposal to pass. Default value: 0.5. */
   threshold: Uint8Array;
   /**
    * Minimum value of Veto votes to Total votes ratio for proposal to be
-   * vetoed. Default value: 1/3.
+   *  vetoed. Default value: 1/3.
    */
   vetoThreshold: Uint8Array;
 }
-function createBaseWeightedVoteOption(): WeightedVoteOption {
-  return {
-    option: 0,
-    weight: "",
-  };
-}
-export const WeightedVoteOption = {
-  typeUrl: "/cosmos.gov.v1beta1.WeightedVoteOption",
-  encode(message: WeightedVoteOption, writer: BinaryWriter = BinaryWriter.create()): BinaryWriter {
-    if (message.option !== 0) {
-      writer.uint32(8).int32(message.option);
-    }
-    if (message.weight !== "") {
-      writer.uint32(18).string(message.weight);
-    }
-    return writer;
-  },
-  decode(input: BinaryReader | Uint8Array, length?: number): WeightedVoteOption {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseWeightedVoteOption();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.option = reader.int32() as any;
-          break;
-        case 2:
-          message.weight = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-  fromJSON(object: any): WeightedVoteOption {
-    const obj = createBaseWeightedVoteOption();
-    if (isSet(object.option)) obj.option = voteOptionFromJSON(object.option);
-    if (isSet(object.weight)) obj.weight = String(object.weight);
-    return obj;
-  },
-  toJSON(message: WeightedVoteOption): unknown {
-    const obj: any = {};
-    message.option !== undefined && (obj.option = voteOptionToJSON(message.option));
-    message.weight !== undefined && (obj.weight = message.weight);
-    return obj;
-  },
-  fromPartial<I extends Exact<DeepPartial<WeightedVoteOption>, I>>(object: I): WeightedVoteOption {
-    const message = createBaseWeightedVoteOption();
-    message.option = object.option ?? 0;
-    message.weight = object.weight ?? "";
-    return message;
-  },
-};
 function createBaseTextProposal(): TextProposal {
   return {
     title: "",
@@ -683,7 +580,6 @@ function createBaseVote(): Vote {
     proposalId: BigInt(0),
     voter: "",
     option: 0,
-    options: [],
   };
 }
 export const Vote = {
@@ -697,9 +593,6 @@ export const Vote = {
     }
     if (message.option !== 0) {
       writer.uint32(24).int32(message.option);
-    }
-    for (const v of message.options) {
-      WeightedVoteOption.encode(v!, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -719,9 +612,6 @@ export const Vote = {
         case 3:
           message.option = reader.int32() as any;
           break;
-        case 4:
-          message.options.push(WeightedVoteOption.decode(reader, reader.uint32()));
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -734,8 +624,6 @@ export const Vote = {
     if (isSet(object.proposalId)) obj.proposalId = BigInt(object.proposalId.toString());
     if (isSet(object.voter)) obj.voter = String(object.voter);
     if (isSet(object.option)) obj.option = voteOptionFromJSON(object.option);
-    if (Array.isArray(object?.options))
-      obj.options = object.options.map((e: any) => WeightedVoteOption.fromJSON(e));
     return obj;
   },
   toJSON(message: Vote): unknown {
@@ -743,11 +631,6 @@ export const Vote = {
     message.proposalId !== undefined && (obj.proposalId = (message.proposalId || BigInt(0)).toString());
     message.voter !== undefined && (obj.voter = message.voter);
     message.option !== undefined && (obj.option = voteOptionToJSON(message.option));
-    if (message.options) {
-      obj.options = message.options.map((e) => (e ? WeightedVoteOption.toJSON(e) : undefined));
-    } else {
-      obj.options = [];
-    }
     return obj;
   },
   fromPartial<I extends Exact<DeepPartial<Vote>, I>>(object: I): Vote {
@@ -757,7 +640,6 @@ export const Vote = {
     }
     message.voter = object.voter ?? "";
     message.option = object.option ?? 0;
-    message.options = object.options?.map((e) => WeightedVoteOption.fromPartial(e)) || [];
     return message;
   },
 };

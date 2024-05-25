@@ -5,7 +5,7 @@ import { isSet, DeepPartial, Exact } from "../../../helpers";
 export const protobufPackage = "cosmos.slashing.v1beta1";
 /** GenesisState defines the slashing module's genesis state. */
 export interface GenesisState {
-  /** params defines all the parameters of the module. */
+  /** params defines all the paramaters of related to deposit. */
   params: Params;
   /**
    * signing_infos represents a map between validator addresses and their
@@ -13,7 +13,7 @@ export interface GenesisState {
    */
   signingInfos: SigningInfo[];
   /**
-   * missed_blocks represents a map between validator addresses and their
+   * signing_infos represents a map between validator addresses and their
    * missed blocks.
    */
   missedBlocks: ValidatorMissedBlocks[];
